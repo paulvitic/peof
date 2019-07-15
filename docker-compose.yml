@@ -1,0 +1,102 @@
+version: '3'
+services:
+  logstash:
+    image: logstash:5.3.0
+    ports:
+      - "5000:5000/udp"
+    volumes:
+      - ./.docker/logStash:/app
+    command: logstash -f /app/logstash.conf
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - 15672:15672
+      - 5672:5672
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+      - RABBITMQ_DEFAULT_VHOST=/
+    depends_on:
+      - "logstash"
+    logging:
+      driver: "gelf"
+      options:
+        gelf-address: "udp://localhost:5000"
+        tag: "rabbitmq"
+
+  mongo:
+    build: ./.docker/mongoDb/
+    #restart: always
+    ports:
+      - 27017:27017
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: password
+    depends_on:
+      - "logstash"
+    logging:
+      driver: "gelf"
+      options:
+        gelf-address: "udp://localhost:5000"
+        tag: "mongo"
+
+  mongo-express:
+    image: mongo-express
+    #restart: always
+    ports:
+      - 8081:8081
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: root
+      ME_CONFIG_MONGODB_ADMINPASSWORD: password
+    depends_on:
+      - "mongo"
+
+  organization:
+    #image: peof/organization/latest:latest
+    build: organization/
+    ports:
+      - "3001:3001"
+    depends_on:
+      - "logstash"
+      - "rabbitmq"
+      - "mongo"
+    logging:
+      driver: "gelf"
+      options:
+        gelf-address: "udp://localhost:5000"
+        tag: "organization"
+
+  organization-ui:
+    build: organization-ui/
+    ports:
+      - "3002:3002"
+    depends_on:
+      - "logstash"
+      - "rabbitmq"
+      - "mongo"
+    logging:
+      driver: "gelf"
+      options:
+        gelf-address: "udp://localhost:5000"
+        tag: "organization-ui"
+
+  nginx:
+    image: nginx:1-alpine
+    volumes:
+      - ./.docker/nginx/nginx.conf:/etc/nginx/conf.d/nginx.conf
+      - ./.docker/nginx/common:/usr/share/nginx/html/common
+    ports:
+      - "3000:3000"
+    depends_on:
+      - "logstash"
+      - "organization"
+      - "organization-ui"
+    logging:
+      driver: "gelf"
+      options:
+        gelf-address: "udp://localhost:5000"
+        tag: "nginx"
+
+
+

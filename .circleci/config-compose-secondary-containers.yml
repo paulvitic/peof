@@ -1,0 +1,55 @@
+# Golang CircleCI 2.0 configuration file
+#
+# Check https://circleci.com/docs/2.0/language-go/ for more details
+version: 2
+jobs:
+  build:
+
+    docker:
+      # primary image
+      - image: paulvitic/private:circleci-go
+        # docker_layer_caching: true  # didnt work?
+        auth:
+          username: paulvitic
+          password: $DOCKERHUB_PASSWORD # project environment variable reference
+
+    steps:
+      - checkout
+      # specify any bash command here prefixed with `run: `
+      #- run: pwd
+
+      # see https://github.com/CircleCI-Public/circleci-demo-docker/blob/docker-compose/.circleci/config.yml
+      - setup_remote_docker:
+          docker_layer_caching: true
+
+      # build secondary containers for integration tests
+      - run:
+          name: Start secondary containers
+          command: |
+            set -x
+            docker-compose -p peof -f docker-compose.yml up --build -d rabbitmq mongo
+
+      - run:
+          name: Waiting for RabbitMQ to be ready
+          command: |
+            for i in `seq 1 10`;
+            do
+              nc -z localhost 15672 && echo Success && exit 0
+              echo -n .
+              sleep 1
+            done
+            echo Failed waiting for RabbitMQ && exit 1
+
+      - run:
+          name: Copy organization source into GOPATH src directory and pull all dependencies
+          command: |
+            cp -r organization/src/organization.peof /go/src/organization.peof
+            cd /go/src/organization.peof
+            go get -v -t -d ./...
+
+      - run:
+          name: Execute tests
+          environment:
+            PROFILE: "ci"
+          command: |
+            go test -v ./...

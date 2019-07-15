@@ -1,0 +1,43 @@
+version: 2
+jobs:
+  build_docker_image:
+    docker:
+      - image: turbinelabs/gcloud-build:latest # includes docker, git, gcloud and kubectl command line tools
+    working_directory: /app
+    steps:
+      - checkout
+      - setup_remote_docker
+      #- setup_remote_docker:
+      #    docker_layer_caching: true # learn about caching. What is cached?
+      - run: openrc boot
+      - run: docker build -t gcr.io/resplendent-fire-2839/nginx:$CIRCLE_BUILD_NUM-$CIRCLE_SHA1 -f ./.docker/prod/Dockerfile .
+      # variables such as GCLOUD_CLUSTER_NAME, GCLOUD_COMPUTE_ZONE, GCLOUD_PROJECT_ID, GOOGLE_AUTH are set in circleCI workflow settings
+      - run: gcloud docker -- push gcr.io/resplendent-fire-2839/nginx:$CIRCLE_BUILD_NUM-$CIRCLE_SHA1
+  deploy_to_gcloud:
+    docker:
+      - image: turbinelabs/gcloud-build:latest
+    working_directory: /app
+    steps:
+      - setup_remote_docker
+      #- setup_remote_docker:
+      #    docker_layer_caching: true
+      - run: openrc boot
+      # variables such as GCLOUD_CLUSTER_NAME, GCLOUD_COMPUTE_ZONE, GCLOUD_PROJECT_ID, GOOGLE_AUTH are set in circleCI workflow settings
+      - run: kubectl run hello-server --image gcr.io/resplendent-fire-2839/nginx:$CIRCLE_BUILD_NUM-$CIRCLE_SHA1 --port 80
+workflows:
+  version: 2
+  build_and_deploy:
+    jobs:
+      - build_docker_image:
+          filters:
+            branches:
+              only:
+                - master
+      - deploy_to_gcloud:
+          filters:
+            branches:
+              only:
+                - master
+          requires:
+            - build_docker_image      
+                

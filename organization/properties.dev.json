@@ -1,0 +1,10 @@
+{
+  "profile": "dev",
+  "port": "3001",
+  "rabbitmq": {
+    "url": "amqp://localhost:5672"
+  },
+  "mongoDb": {
+    "uri": "mongodb://organization:password@localhost:27017/organization"
+  }
+}
