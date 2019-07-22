@@ -8,9 +8,6 @@ jobs:
     docker:
       - image: paulvitic/peof-circleci:20190715122135
         docker_layer_caching: true
-        auth:
-          username: paulvitic
-          password: $DOCKERHUB_PASSWORD # project environment variable reference
 
       - image: circleci/mongo:4
         environment:

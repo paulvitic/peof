@@ -1,4 +1,4 @@
-[![CircleCI](https://circleci.com/gh/paulvitic/product-engineering.svg?style=svg)](https://circleci.com/gh/paulvitic/product-engineering)
+[![CircleCI](https://circleci.com/gh/paulvitic/peof.svg?style=svg)](https://circleci.com/gh/paulvitic/peof)
 
 # PEOF - A Product & Engineering Organization Framework 
 
