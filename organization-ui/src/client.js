@@ -1,8 +1,6 @@
 /* globals window */
-import BlueBasket from './blue-basket/BlueBasket';
-import BlueBuy from './blue-buy/BlueBuy';
+import CompanyList from "./company/CompanyList";
 
 window.blue = { count: 0 };
-window.customElements.define('blue-basket', BlueBasket);
-window.customElements.define('blue-buy', BlueBuy);
+window.customElements.define('company-list', CompanyList);
 

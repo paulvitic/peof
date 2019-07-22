@@ -1,7 +1,19 @@
+const path = require( "path" );
+
 module.exports = {
-  entry: './src/client.js',
+  context: path.join( __dirname, "src" ),
+  entry: {
+    app: "./client.js",
+  },
+  resolve: {
+    modules: [
+      path.resolve( "./src" ),
+      "node_modules",
+    ],
+  },
   output: {
-    filename: './build/fragments.js',
+    path: path.resolve( __dirname, "build" ),
+    filename: 'fragments.js',
   },
   module: {
     rules: [
@@ -9,10 +21,7 @@ module.exports = {
         test: /\.js$/,
         exclude: /(node_modules)/,
         use: {
-          loader: 'babel-loader',
-          options: {
-            presets: ['env'],
-          },
+          loader: 'babel-loader'
         },
       },
     ],

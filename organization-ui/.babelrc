@@ -1,0 +1,24 @@
+{
+  "presets": [
+    [ "env",
+      {
+        "modules": false,
+        "useBuiltIns": "usage"
+      }
+    ],
+    "react"
+  ],
+  "plugins": [
+    "transform-custom-element-classes",
+    "transform-es2015-modules-commonjs"
+  ],
+  "env": {
+    "test": {
+      "presets": ["react"],
+      "plugins": [
+        "transform-custom-element-classes",
+        "transform-es2015-modules-commonjs"
+      ]
+    }
+  }
+}
