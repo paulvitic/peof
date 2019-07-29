@@ -44,6 +44,8 @@ jobs:
             cd /go/src/organization.peof
             go get -v -t -d ./...
 
+      # static code analysis & coverage
+
       - run:
           name: Execute tests
           environment:
