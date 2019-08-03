@@ -6,7 +6,7 @@ jobs:
   build:
 
     docker:
-      - image: paulvitic/peof-circleci:20190803181614
+      - image: paulvitic/peof-circleci:20190803185216
         docker_layer_caching: true
 
       - image: circleci/mongo:4
