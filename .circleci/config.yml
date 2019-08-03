@@ -42,12 +42,14 @@ jobs:
           name: Static code analysis on organization-ui
           command: |
             pwd
+            cd /home/circleci/project/organization-ui
+            npm install
             eslint organization-ui/src
 
       - run:
           name: Copy organization source into GOPATH src directory and pull all dependencies
           command: |
-            cp -r organization/src/organization.peof /go/src/organization.peof
+            cp -r /home/circleci/project/organization/src/organization.peof /go/src/organization.peof
             cd /go/src/organization.peof
             go get -v -t -d ./...
 
