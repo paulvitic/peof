@@ -6,7 +6,7 @@ jobs:
   build:
 
     docker:
-      - image: paulvitic/peof-circleci:20190715122135
+      - image: paulvitic/peof-circleci:20190803181614
         docker_layer_caching: true
 
       - image: circleci/mongo:4
@@ -37,14 +37,19 @@ jobs:
           command: |
             mongo localhost:27017 < /home/circleci/mongo/mongo-init.js
 
+      # static code analysis & coverage
+      - run:
+          name: Static code analysis on organization-ui
+          command: |
+            pwd
+            eslint organization-ui/src
+
       - run:
           name: Copy organization source into GOPATH src directory and pull all dependencies
           command: |
             cp -r organization/src/organization.peof /go/src/organization.peof
             cd /go/src/organization.peof
             go get -v -t -d ./...
-
-      # static code analysis & coverage
 
       - run:
           name: Execute tests
