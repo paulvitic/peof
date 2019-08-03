@@ -44,7 +44,7 @@ jobs:
             pwd
             cd /home/circleci/project/organization-ui
             npm install
-            eslint organization-ui/src
+            eslint ./src
 
       - run:
           name: Copy organization source into GOPATH src directory and pull all dependencies
