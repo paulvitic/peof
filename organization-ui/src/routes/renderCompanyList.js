@@ -1,18 +1,18 @@
 import express from 'express';
-import React from 'react'
-import {renderToString} from "react-dom/server";
-import {ReactCompanyList} from "../components/company";
+import React from 'react';
+import {renderToString} from 'react-dom/server';
+import {ReactCompanyList} from '../components/company';
 
 export const renderCompanyList = express.Router();
 
 /* GET home page. */
-renderCompanyList.get('/', (req, res, next) => {
+renderCompanyList.get('/', (req, res) => {
   const jsx = (
-      <ReactCompanyList primary>test</ReactCompanyList>
+    <ReactCompanyList primary>test</ReactCompanyList>
   );
   const reactDom = renderToString( jsx );
 
-  res.writeHead( 200, { "Content-Type": "text/html" } );
+  res.writeHead( 200, { 'Content-Type': 'text/html' } );
   res.end( htmlTemplate( reactDom) );
 });
 

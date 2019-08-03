@@ -5,7 +5,7 @@
   "description": "",
   "main": "src/server.js",
   "scripts": {
-    "build": "webpack -p",
+    "build": "eslint --fix src && webpack -p",
     "server": "NODE_ENV=dev nodemon index.js",
     "start": "npm run build; npm run server",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -38,6 +38,8 @@
     "concurrently": "^3.6.1",
     "enzyme": "^3.9.0",
     "enzyme-adapter-react-16": "^1.10.0",
+    "eslint": "^6.1.0",
+    "eslint-plugin-react": "^7.14.3",
     "fs-extra": "^7.0.1",
     "mocha": "^5.2.0",
     "nodemon": "^1.19.1",
