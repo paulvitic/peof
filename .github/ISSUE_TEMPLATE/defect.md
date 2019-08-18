@@ -1,6 +1,7 @@
 ---
 name: Defect
-about: Create a report to help us improve
+about: Problems that have been discovered in the product that the product owner or
+  key stakeholder wants fixed.
 title: ''
 labels: bug
 assignees: ''

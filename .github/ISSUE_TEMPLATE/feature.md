@@ -1,6 +1,6 @@
 ---
 name: Feature
-about: Suggest an idea for this project
+about: New bits of functionality desired in the product.
 title: ''
 labels: feature
 assignees: ''
