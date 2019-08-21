@@ -39,7 +39,7 @@ jobs:
 
       # static code analysis & coverage
       - run:
-          name: Static code analysis on ${SOURCE_ROOT}
+          name: Static code analysis
           command: |
             pwd
             cd /home/circleci/project/${SOURCE_ROOT}
@@ -69,6 +69,7 @@ workflows:
   analyse_code_organization-ui:
     jobs:
       - build:
+          # this contexts is maintained at cicrleci
           context: peof-organization-ui
           filters:
             branches:
