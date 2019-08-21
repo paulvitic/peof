@@ -1,6 +1,0 @@
-@startuml
-title PEOF - System Context
-[Spring PetClinic] <<Software System>> as SpringPetClinic
-actor ClinicEmployee
-ClinicEmployee ..> SpringPetClinic : Uses
-@enduml
