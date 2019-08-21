@@ -47,4 +47,3 @@ with the agile boards of each team.
 * [CircleCi build custom primary container](https://circleci.com/docs/2.0/custom-images/)
 * [CircleCi primary containers](https://github.com/CircleCI-Public/example-images)
 * [Goland 11 Alpine Docker image](https://github.com/docker-library/golang/blob/103d42338bd9c3f661ade41f39dbc88fe9dc83a3/1.11/alpine3.10/Dockerfile)
-* [Architecture](architecture.md)
