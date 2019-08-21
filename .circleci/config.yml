@@ -62,3 +62,12 @@ jobs:
             PROFILE: "ci"
           command: |
             go test -v ./...
+workflows:
+  version: 2
+  analyse_code_organization-ui:
+    jobs:
+      - build:
+          filters:
+            branches:
+              only:
+                - /organization-ui\/.*/
