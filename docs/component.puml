@@ -14,6 +14,7 @@ package WebApplication {
 [VisitController] <<Spring MVC Controller>> as VisitController
 [VisitRepository] <<Spring Repository>> as VisitRepository
 }
+
 ClinicEmployee ..> CrashController : Uses <<HTTP>>
 ClinicEmployee ..> OwnerController : Uses <<HTTP>>
 ClinicEmployee ..> PetController : Uses <<HTTP>>
