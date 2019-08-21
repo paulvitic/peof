@@ -1,4 +1,4 @@
-# this is from CircleCi https://circleci.com/docs/2.0/custom-images/#section=configurationz
+# this is from CircleCi https://circleci.com/docs/2.0/custom-images/#section=configuration
 FROM buildpack-deps:jessie
 
 # gcc for cgo
@@ -135,6 +135,11 @@ ENV GOPATH /go
 ENV PATH $GOPATH/bin:/usr/local/go/bin:$PATH
 
 RUN mkdir -p "$GOPATH/src" "$GOPATH/bin" && chmod -R 777 "$GOPATH"
+
+# Go test runner with junit style output so that we have a test report in circle ci
+RUN curl https://raw.githubusercontent.com/golang/dep/master/install.sh | INSTALL_DIRECTORY=/usr/local/bin sh
+RUN curl -sSL https://github.com/gotestyourself/gotestsum/releases/download/v0.3.4/gotestsum_0.3.4_linux_amd64.tar.gz | \
+  tar -xz -C /usr/local/bin gotestsum
 # ================================
 # Golang end
 # ================================
@@ -200,16 +205,6 @@ RUN set -ex \
 
 RUN npm install -g eslint
 RUN echo "Node.js installation ended"
-
-# ============================
-# Image Customizations start
-# ============================
-RUN curl https://raw.githubusercontent.com/golang/dep/master/install.sh | INSTALL_DIRECTORY=/usr/local/bin sh
-RUN curl -sSL https://github.com/gotestyourself/gotestsum/releases/download/v0.3.4/gotestsum_0.3.4_linux_amd64.tar.gz | \
-  tar -xz -C /usr/local/bin gotestsum
-# ============================
-# Image Customizations end
-# ============================
 
 # ============================
 # Mongo client start
