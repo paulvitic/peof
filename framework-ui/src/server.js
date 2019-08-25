@@ -4,6 +4,8 @@ import morgan from 'morgan';
 import path from 'path';
 import renderPage from './page/render';
 
+const port = process.env.PORT || 8080;
+
 const app = express();
 app.use(morgan('dev'));
 
@@ -14,6 +16,6 @@ app.get('/', (req, res) => {
   res.render('layout', { html });
 });
 
-app.listen(80);
+app.listen(port);
 console.log(`🔴  team red running. product page is available here:
->> http://127.0.0.1:3003/`);
+>> http://127.0.0.1:${port}/`);
