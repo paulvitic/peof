@@ -14,6 +14,6 @@ app.get('/', (req, res) => {
   res.render('layout', { html });
 });
 
-app.listen(3003);
+app.listen(80);
 console.log(`🔴  team red running. product page is available here:
 >> http://127.0.0.1:3003/`);
