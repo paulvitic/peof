@@ -2,13 +2,13 @@
 version: 2.1
 jobs:
 
-  code_analysis_nodejs:
+  #code_analysis_nodejs:
 
-  unit_test_nodejs:
+  #unit_test_nodejs:
 
-  integration_test_nodejs:
+  #integration_test_nodejs:
 
-  code_analysis_go:
+  #code_analysis_go:
 
   build:
     description: "Default build job, will be removed soon"
@@ -18,7 +18,6 @@ jobs:
         type: string
     docker:
       - image: paulvitic/peof-circleci:20190803185216
-        docker_layer_caching: true
 
       - image: circleci/mongo:4
         environment:
