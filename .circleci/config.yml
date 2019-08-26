@@ -1,7 +1,8 @@
-# see https://circleci.com/docs/2.0/configuration-reference
-version: 2.1
+# Golang CircleCI 2.0 configuration file
+#
+# Check https://circleci.com/docs/2.0/language-go/ for more details
+version: 2
 jobs:
-
   code_analysis_nodejs:
     description: "Static code analysis on Nodejs app"
     parameters:
@@ -23,6 +24,12 @@ jobs:
           path: /home/circleci/project/<< parameters.source_root >>/reports
       - store_artifacts:
           path: /home/circleci/project/<< parameters.source_root >>/reports
+  deploy_to_test_environment:
+    description: "Deploy to Heroku test environment"
+    parameters:
+      source_root:
+        description: "Which sub folder is being built."
+        type: string
 
 
   #unit_test_nodejs:
@@ -32,11 +39,6 @@ jobs:
   #code_analysis_go:
 
   build:
-    description: "Default build job, will be removed soon"
-    parameters:
-      source_root:
-        description: "Which sub folder is being built."
-        type: string
     docker:
       - image: paulvitic/peof-circleci:20190803185216
 
@@ -106,10 +108,17 @@ workflows:
     jobs:
       - code_analysis_nodejs:
           source_root: organization-ui
-          # this contexts is maintained at cirleci
-          # context: peof-organization-ui TODO remove this context, use context predominantly for secrets, use parameters for variables
           filters:
             branches:
               only:
                 # run the job only for commit to branches which start with name "organization-ui/"
                 - /organization-ui\/.*/
+  build_framework_ui:
+    jobs:
+      - code_analysis_nodejs:
+          source_root: framework-ui
+          filters:
+            branches:
+              only:
+                # run the job only for commit to branches which start with name "organization-ui/"
+                - /framework-ui\/.*/              -

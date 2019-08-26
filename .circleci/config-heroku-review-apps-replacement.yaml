@@ -1,0 +1,51 @@
+version: 2.1
+
+# To continuously deploy your feature branch to a review server,
+# fill in the 'review_branch' and 'review_server' fields below.
+# see: https://spin.atomicobject.com/2019/02/01/heroku-review-apps-replacement/
+aliases:
+  - &review_branch feature/do-a-thing
+  - &review_server our-project-dev-1
+
+jobs:
+  build:
+    environment:
+      NODE_ENV: test
+    docker:
+      - image: circleci/node:10-browsers
+      - image: circleci/redis:4
+      - image: circleci/postgres:10.5
+
+  # (... the rest of the build definition goes here ...)
+
+  deploy_heroku:
+    description: "Deploy current branch to specified heroku app"
+    parameters:
+      heroku_app:
+        description: "Where to deploy"
+        type: string
+      extra_git_push_args:
+        description: "More git push flags (e.g. -f)"
+        default: ""
+        type: string
+    docker:
+      - image: circleci/node:10-browsers
+    steps:
+      - checkout
+      - run:
+          name: Deploy branch to Heroku
+          command: git push << parameters.extra_git_push_args >> https://heroku:$HEROKU_API_KEY@git.heroku.com/<< parameters.heroku_app >>.git $CIRCLE_BRANCH:master
+
+workflows:
+  version: 2
+  build-and-deploy:
+    jobs:
+      - build
+      - deploy_heroku:
+          heroku_app: *review_server # change this
+          extra_git_push_args: -f
+          requires:
+            - build
+          filters:
+            branches:
+              only: *review_branch # change this
