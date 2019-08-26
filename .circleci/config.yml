@@ -118,6 +118,7 @@ workflows:
                 - /framework-ui\/.*/
       - deploy_to_test_environment:
           source_root: framework-ui
+          heroku_app: framework-ui-test
           filters:
             branches:
               only:
