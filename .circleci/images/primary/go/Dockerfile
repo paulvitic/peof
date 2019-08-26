@@ -1,4 +1,4 @@
-FROM paulvitic/peof-circleci:20190826161110
+FROM paulvitic/peof-circleci:20190826180524
 
 USER root
 
