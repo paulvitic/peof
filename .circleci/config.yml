@@ -19,10 +19,10 @@ jobs:
             cd /home/circleci/project/<< parameters.source_root >>
             npm install
             eslint ./src --format junit --output-file /home/circleci/project/<< parameters.source_root >>/reports/eslint.xml
-            - store_test_results:
-                path: /home/circleci/project/<< parameters.source_root >>/reports
-            - store_artifacts:
-                path: /home/circleci/project/<< parameters.source_root >>/reports
+      - store_test_results:
+          path: /home/circleci/project/<< parameters.source_root >>/reports
+      - store_artifacts:
+          path: /home/circleci/project/<< parameters.source_root >>/reports
 
 
   #unit_test_nodejs:
