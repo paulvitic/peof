@@ -11,6 +11,11 @@ jobs:
   code_analysis_go:
 
   build:
+    description: "Default build job, will be removed soon"
+    parameters:
+      source_root:
+        description: "Which sub folder is being built."
+        type: string
     docker:
       - image: paulvitic/peof-circleci:20190803185216
         docker_layer_caching: true
