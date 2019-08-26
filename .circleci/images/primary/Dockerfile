@@ -1,6 +1,7 @@
 # this is from CircleCi https://circleci.com/docs/2.0/custom-images/#section=configuration
 FROM buildpack-deps:jessie
 
+RUN echo "=== starting CircleCI tools installation ==="
 # gcc for cgo
 RUN apt-get update && apt-get install -y --no-install-recommends \
 		g++ \
@@ -11,8 +12,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 		apt-utils \
 	&& rm -rf /var/lib/apt/lists/*
 
-
-RUN echo "=== starting CircleCI tools installation ==="
 # make Apt non-interactive
 RUN echo 'APT::Get::Assume-Yes "true";' > /etc/apt/apt.conf.d/90circleci \
   && echo 'DPkg::Options "--force-confnew";' >> /etc/apt/apt.conf.d/90circleci
@@ -54,6 +53,7 @@ RUN JQ_URL="https://circle-downloads.s3.amazonaws.com/circleci-images/cache/linu
   && chmod +x /usr/bin/jq \
   && jq --version
 
+# add circleci user
 RUN groupadd --gid 3434 circleci \
   && useradd --uid 3434 --gid circleci --shell /bin/bash --create-home circleci \
   && echo 'circleci ALL=NOPASSWD: ALL' >> /etc/sudoers.d/50-circleci \
@@ -86,7 +86,6 @@ RUN DOCKERIZE_URL="https://circle-downloads.s3.amazonaws.com/circleci-images/cac
   && tar -C /usr/local/bin -xzvf /tmp/dockerize-linux-amd64.tar.gz \
   && rm -rf /tmp/dockerize-linux-amd64.tar.gz \
   && dockerize --version
-
 RUN echo "=== finished Docker installation ==="
 
 
@@ -94,9 +93,8 @@ RUN echo "=== starting AWS CLI installation ==="
 RUN apt-get update && apt-get install -y awscli
 RUN echo "=== finished AWS CLI installation ==="
 
-# ============================
-# Mongo client start
-# ============================
+
+RUN echo "=== starting MongoDB client installation ==="
 # Import the public key used by the package management system
 RUN sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 9DA31620334BD75D9DCB49F368818C72E52529D4
 # Create a list file for MongoDB
@@ -109,19 +107,14 @@ RUN apt-get -y install mongodb-org-tools
 # add an db init script
 RUN mkdir /home/circleci/mongo
 COPY mongo-init.js /home/circleci/mongo/mongo-init.js
-# ============================
-# Mongo client end
-# ============================
+RUN echo "=== finished MongoDB client installation ==="
 
-# ============================
-# Add custom scripts start
-# ============================
+
+RUN echo "=== starting custom scripts installation ==="
 COPY wait-for-container.sh /usr/bin/wait-for-container
 RUN chmod +x /usr/bin/wait-for-container
-# ============================
-# Add custom scripts start
-# ============================
+RUN echo "=== finished custom scripts installation ==="
 
-USER circleci
+#USER circleci
 
-CMD ["/bin/sh"]
+#CMD ["/bin/sh"]

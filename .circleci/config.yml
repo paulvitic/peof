@@ -1,13 +1,16 @@
 # see https://circleci.com/docs/2.0/configuration-reference
 version: 2
 jobs:
+
+  code_analysis_nodejs:
+
+  unit_test_nodejs:
+
+  integration_test_nodejs:
+
+  code_analysis_go:
+
   build:
-    code_analysis_nodejs:
-
-    unit_test_nodejs:
-
-    integration_test_nodejs:
-
     docker:
       - image: paulvitic/peof-circleci:20190803185216
         docker_layer_caching: true
@@ -45,13 +48,13 @@ jobs:
           name: Static code analysis
           command: |
             pwd
-            cd /home/circleci/project/${SOURCE_ROOT}
+            cd /home/circleci/project/<< parameters.source_root >>
             npm install
-            eslint ./src --format junit --output-file /home/circleci/project/${SOURCE_ROOT}/reports/eslint.xml
+            eslint ./src --format junit --output-file /home/circleci/project/<< parameters.source_root >>/reports/eslint.xml
       - store_test_results:
-          path: /home/circleci/project/${SOURCE_ROOT}/reports
+          path: /home/circleci/project/<< parameters.source_root >>/reports
       - store_artifacts:
-          path: /home/circleci/project/${SOURCE_ROOT}/reports
+          path: /home/circleci/project/<< parameters.source_root >>/reports
 
       - run:
           name: Copy organization source into GOPATH src directory and pull all dependencies
@@ -67,13 +70,32 @@ jobs:
           command: |
             go test -v ./...
 
+  deploy_heroku:
+    description: "Deploy current branch to specified heroku app"
+    parameters:
+      heroku_app:
+        description: "Where to deploy"
+        type: string
+      extra_git_push_args:
+        description: "More git push flags (e.g. -f)"
+        default: ""
+        type: string
+    docker:
+      - image: circleci/node:10-browsers
+    steps:
+      - checkout
+      - run:
+          name: Deploy branch to Heroku
+          command: git push << parameters.extra_git_push_args >> https://heroku:$HEROKU_API_KEY@git.heroku.com/<< parameters.heroku_app >>.git $CIRCLE_BRANCH:master
+
 workflows:
   version: 2
   code_analysis_organization-ui:
     jobs:
       - build:
-          # this contexts is maintained at cicrleci
-          context: peof-organization-ui
+          source_root: organization-ui
+          # this contexts is maintained at cirleci
+          # context: peof-organization-ui
           filters:
             branches:
               only:
