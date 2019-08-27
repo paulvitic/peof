@@ -42,8 +42,8 @@ jobs:
       - run:
           name: Deploy branch to Heroku
           command: |
-            cat ~/.netrc
-            echo $HEROKU_API_KEY
+            touch ~/.netrc
+            echo 'machine git.heroku.com login paul.vitic@gmail.com password xxxxxx' >> ~/.netrc
             git remote add << parameters.heroku_app >> https://git.heroku.com/<< parameters.heroku_app >>.git
             git subtree push --prefix << parameters.source_root >> << parameters.heroku_app >> master
 
