@@ -1,8 +1,51 @@
-# see https://circleci.com/docs/2.0/configuration-reference
 version: 2.1
 jobs:
+  code_analysis_nodejs:
+    description: "Static code analysis on Nodejs app"
+    parameters:
+      source_root:
+        description: "Which sub folder is being built."
+        type: string
+    docker:
+      - image: paulvitic/peof-circleci-nodejs:20190826180803
+    steps:
+      - checkout
+      - run:
+          name: Static code analysis with Eslint
+          command: |
+            pwd
+            cd /home/circleci/project/<< parameters.source_root >>
+            npm install
+            eslint ./src --format junit --output-file /home/circleci/project/<< parameters.source_root >>/reports/eslint.xml
+      - store_test_results:
+          path: /home/circleci/project/<< parameters.source_root >>/reports
+      - store_artifacts:
+          path: /home/circleci/project/<< parameters.source_root >>/reports
 
-  #code_analysis_nodejs:
+  deploy_to_test_environment:
+    description: "Deploy to Heroku test environment"
+    parameters:
+      source_root:
+        description: "Which sub folder is being built."
+        type: string
+      heroku_app:
+        description: "Where to deploy"
+        type: string
+      extra_git_push_args:
+        description: "More git push flags (e.g. -f)"
+        default: ""
+        type: string
+    docker:
+      - image: paulvitic/peof-circleci:20190826180524
+    steps:
+      - checkout
+      - run:
+          name: Deploy branch to Heroku
+          command: |
+            git subtree push --prefix << parameters.source_root >> << parameters.extra_git_push_args >> \
+            https://$HEROKU_USER:$HEROKU_API_KEY@git.heroku.com/<< parameters.heroku_app >>.git \
+            $CIRCLE_BRANCH:master
+
 
   #unit_test_nodejs:
 
@@ -11,11 +54,6 @@ jobs:
   #code_analysis_go:
 
   build:
-    description: "Default build job, will be removed soon"
-    parameters:
-      source_root:
-        description: "Which sub folder is being built."
-        type: string
     docker:
       - image: paulvitic/peof-circleci:20190803185216
 
@@ -47,19 +85,6 @@ jobs:
           command: |
             mongo localhost:27017 < /home/circleci/mongo/mongo-init.js
 
-      # static code analysis & coverage
-      - run:
-          name: Static code analysis
-          command: |
-            pwd
-            cd /home/circleci/project/<< parameters.source_root >>
-            npm install
-            eslint ./src --format junit --output-file /home/circleci/project/<< parameters.source_root >>/reports/eslint.xml
-      - store_test_results:
-          path: /home/circleci/project/<< parameters.source_root >>/reports
-      - store_artifacts:
-          path: /home/circleci/project/<< parameters.source_root >>/reports
-
       - run:
           name: Copy organization source into GOPATH src directory and pull all dependencies
           command: |
@@ -74,34 +99,33 @@ jobs:
           command: |
             go test -v ./...
 
-  deploy_heroku:
-    description: "Deploy current branch to specified heroku app"
-    parameters:
-      heroku_app:
-        description: "Where to deploy"
-        type: string
-      extra_git_push_args:
-        description: "More git push flags (e.g. -f)"
-        default: ""
-        type: string
-    docker:
-      - image: circleci/node:10-browsers
-    steps:
-      - checkout
-      - run:
-          name: Deploy branch to Heroku
-          command: git push << parameters.extra_git_push_args >> https://heroku:$HEROKU_API_KEY@git.heroku.com/<< parameters.heroku_app >>.git $CIRCLE_BRANCH:master
 
 workflows:
   version: 2
   code_analysis_organization-ui:
     jobs:
-      - build:
+      - code_analysis_nodejs:
           source_root: organization-ui
-          # this contexts is maintained at cirleci
-          # context: peof-organization-ui
           filters:
             branches:
               only:
                 # run the job only for commit to branches which start with name "organization-ui/"
                 - /organization-ui\/.*/
+  build_framework_ui:
+    jobs:
+      - code_analysis_nodejs:
+          source_root: framework-ui
+          filters:
+            branches:
+              only:
+                - /framework-ui\/.*/
+      - deploy_to_test_environment:
+          context: peof # set on CircleCI to hold secrets such as $HEROKU_API_KEY
+          source_root: framework-ui
+          heroku_app: framework-ui-test
+          filters:
+            branches:
+              only:
+                - /framework-ui\/.*/
+          requires:
+            - code_analysis_nodejs

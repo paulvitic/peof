@@ -115,6 +115,6 @@ COPY wait-for-container.sh /usr/bin/wait-for-container
 RUN chmod +x /usr/bin/wait-for-container
 RUN echo "=== finished custom scripts installation ==="
 
-#USER circleci
+USER circleci
 
-#CMD ["/bin/sh"]
+CMD ["/bin/sh"]

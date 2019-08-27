@@ -1,4 +1,6 @@
-FROM paulvitic/peof-circleci:20190826161110
+FROM paulvitic/peof-circleci:20190826180524
+
+USER root
 
 RUN echo "=== starting Go tools installation ==="
 ENV GOLANG_VERSION 1.11.12
