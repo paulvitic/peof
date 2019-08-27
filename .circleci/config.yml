@@ -54,6 +54,7 @@ jobs:
       - run:
           name: Get PR
           command: |
+            printenv
             echo $CIRCLE_PULL_REQUEST
             echo $CIRCLE_PULL_REQUESTS
             echo $CIRCLE_REPOSITORY_URL
