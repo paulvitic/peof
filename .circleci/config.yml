@@ -44,6 +44,11 @@ jobs:
           command: |
             git subtree push --prefix << parameters.source_root >> https://heroku:$HEROKU_API_KEY@git.heroku.com/<< parameters.heroku_app >>.git master
 
+  deploy_to_staging_environment:
+    steps:
+      # see: https://circleci-public.github.io/pipeline-preview-docs/pipeline_variables_reference.html
+      - run: echo "The PR source branch of this pipeline is << pipeline.pull_request.source_branch >>"
+
   #unit_test_nodejs:
 
   #integration_test_nodejs:
@@ -125,3 +130,10 @@ workflows:
                 - /framework-ui\/.*/
           requires:
             - code_analysis_nodejs
+  deploy_to_staging_environment:
+    jobs:
+      - deploy_to_staging_environment:
+          filters:
+            branches:
+              only:
+                - /master/
