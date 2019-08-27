@@ -122,6 +122,8 @@ RUN echo "=== finished MongoDB client installation ==="
 RUN echo "=== starting custom scripts installation ==="
 COPY wait-for-container.sh /usr/bin/wait-for-container
 RUN chmod +x /usr/bin/wait-for-container
+COPY parse-github-merge-msg.sh /usr/bin/parse-github-merge-msg
+RUN chmod +x /usr/bin/parse-github-merge-msg
 RUN echo "=== finished custom scripts installation ==="
 
 
