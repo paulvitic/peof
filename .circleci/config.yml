@@ -45,6 +45,9 @@ jobs:
             git subtree push --prefix << parameters.source_root >> https://heroku:$HEROKU_API_KEY@git.heroku.com/<< parameters.heroku_app >>.git master
 
   deploy_to_staging_environment:
+    description: "Deploy to Heroku staging environment"
+    docker:
+      - image: paulvitic/peof-circleci:20190827105003
     steps:
       # see: https://circleci-public.github.io/pipeline-preview-docs/pipeline_variables_reference.html
       - run: echo "The PR source branch of this pipeline is << pipeline.pull_request.source_branch >>"
