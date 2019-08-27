@@ -36,15 +36,12 @@ jobs:
         default: ""
         type: string
     docker:
-      - image: paulvitic/peof-circleci:20190827100555
+      - image: paulvitic/peof-circleci:20190827105003
     steps:
       - checkout
       - run:
           name: Deploy branch to Heroku
           command: |
-            touch ~/.netrc
-            echo 'machine git.heroku.com login paul.vitic@gmail.com password xxxxxx' >> ~/.netrc
-            cat ~/.netrc
             git remote add << parameters.heroku_app >> https://git.heroku.com/<< parameters.heroku_app >>.git
             git subtree push --prefix << parameters.source_root >> << parameters.heroku_app >> master
 

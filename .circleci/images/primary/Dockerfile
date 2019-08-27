@@ -96,6 +96,10 @@ RUN echo "=== finished AWS CLI installation ==="
 
 RUN echo "=== starting Heroku CLI installation ==="
 RUN curl https://cli-assets.heroku.com/install-ubuntu.sh | sh
+# add heroku login credentials for circleci user
+RUN touch ~/.netrc
+RUN echo 'machine api.heroku.com login paul.vitic@gmail.com password ABC123' >> ~/.netrc
+RUN echo 'machine git.heroku.com login paul.vitic@gmail.com password ABC123' >> ~/.netrc
 RUN echo "=== finished Heroku CLI installation ==="
 
 
@@ -122,8 +126,5 @@ RUN echo "=== finished custom scripts installation ==="
 
 
 USER circleci
-# add heroku login credentials for circleci user
-RUN touch ~/.netrc
-RUN echo 'machine api.heroku.com login paul.vitic@gmail.com password xxxxxx' >> ~/.netrc
 
 CMD ["/bin/sh"]
