@@ -46,6 +46,11 @@ jobs:
 
   deploy_to_staging_environment:
     description: "Deploy to Heroku staging environment"
+    parameters:
+      source_branch:
+        description: "Source branch name of PR."
+        default: ""
+          type: string
     docker:
       - image: paulvitic/peof-circleci:20190827105003
     steps:
@@ -134,7 +139,7 @@ workflows:
                 - /framework-ui\/.*/
           requires:
             - code_analysis_nodejs
-  deploy_to_staging:
+  deploy_to_staging_environment:
     jobs:
       - deploy_to_staging_environment:
           filters:
