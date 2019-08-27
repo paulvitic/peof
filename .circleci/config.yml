@@ -50,7 +50,7 @@ jobs:
       source_branch:
         description: "Source branch name of PR."
         default: ""
-          type: string
+        type: string
     docker:
       - image: paulvitic/peof-circleci:20190827105003
     steps:
