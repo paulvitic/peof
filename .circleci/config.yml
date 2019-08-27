@@ -52,7 +52,12 @@ jobs:
       - checkout
       - run:
           name: Extract GitHub merge message to environment variables
-          command: parse-github-merge-msg
+          command: |
+            parse-github-merge-msg
+            echo 'export GITHUB_PR_USERNAME=$GITHUB_PR_USERNAME' >> $BASH_ENV
+            echo 'export GITHUB_PR_SOURCE_ROOT=$GITHUB_PR_SOURCE_ROOT' >> $BASH_ENV
+            echo 'export GITHUB_PR_ISSUE=$GITHUB_PR_ISSUE' >> $BASH_ENV
+            source $BASH_ENV
       - run:
           name: Deploy branch to Heroku staging
           command: |
