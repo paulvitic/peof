@@ -49,6 +49,7 @@ jobs:
     docker:
       - image: paulvitic/peof-circleci:20190827105003
     steps:
+      - checkout
       # see: https://circleci-public.github.io/pipeline-preview-docs/pipeline_variables_reference.html
       - run: echo "The PR source branch of this pipeline is << pipeline.pull_request.source_branch >>"
 
