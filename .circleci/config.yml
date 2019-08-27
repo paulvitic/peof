@@ -42,7 +42,6 @@ jobs:
       - run:
           name: Deploy branch to Heroku
           command: |
-            git checkout $CIRCLE_BRANCH
             git subtree push --prefix << parameters.source_root >> https://heroku:$HEROKU_API_KEY@git.heroku.com/<< parameters.heroku_app >>.git master
 
   #unit_test_nodejs:
