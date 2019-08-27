@@ -56,7 +56,7 @@ jobs:
     steps:
       - checkout
       # see: https://circleci-public.github.io/pipeline-preview-docs/pipeline_variables_reference.html
-      - run: echo "The PR source branch of this pipeline is << pipeline.pull_request.source_branch >>"
+      - run: echo "The PR source branch of this pipeline is << pipeline.id >>"
 
   #unit_test_nodejs:
 
@@ -139,7 +139,6 @@ workflows:
                 - /framework-ui\/.*/
           requires:
             - code_analysis_nodejs
-
   deploy_to_staging_environment:
     jobs:
       - deploy_to_staging_environment:
