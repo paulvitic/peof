@@ -53,7 +53,7 @@ RUN JQ_URL="https://circle-downloads.s3.amazonaws.com/circleci-images/cache/linu
   && chmod +x /usr/bin/jq \
   && jq --version
 
-# add circleci user
+# adding circleci user
 RUN groupadd --gid 3434 circleci \
   && useradd --uid 3434 --gid circleci --shell /bin/bash --create-home circleci \
   && echo 'circleci ALL=NOPASSWD: ALL' >> /etc/sudoers.d/50-circleci \
@@ -94,6 +94,11 @@ RUN apt-get update && apt-get install -y awscli
 RUN echo "=== finished AWS CLI installation ==="
 
 
+RUN echo "=== starting Heroku CLI installation ==="
+RUN curl https://cli-assets.heroku.com/install-ubuntu.sh | sh
+RUN echo "=== finished Heroku CLI installation ==="
+
+
 RUN echo "=== starting MongoDB client installation ==="
 # Import the public key used by the package management system
 RUN sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 9DA31620334BD75D9DCB49F368818C72E52529D4
@@ -114,6 +119,7 @@ RUN echo "=== starting custom scripts installation ==="
 COPY wait-for-container.sh /usr/bin/wait-for-container
 RUN chmod +x /usr/bin/wait-for-container
 RUN echo "=== finished custom scripts installation ==="
+
 
 USER circleci
 
