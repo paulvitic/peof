@@ -55,10 +55,8 @@ jobs:
           name: Get PR
           command: |
             echo $CIRCLE_PULL_REQUEST
-      - run:
-          name: Get PR with another param
-          command: |
-            echo $CI_PULL_REQUEST
+            echo $CIRCLE_PULL_REQUESTS
+            echo $CIRCLE_REPOSITORY_URL
 
 
   #unit_test_nodejs:
