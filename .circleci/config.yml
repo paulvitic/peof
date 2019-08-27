@@ -54,8 +54,7 @@ jobs:
       - run:
           name: Get PR
           command: |
-            printenv
-            git log -1 --pretty=%B
+            git log -1 --pretty=%B | grep -Po '([a-z]|\d|-)*\/' | sed "s,/$,,"
 
 
   #unit_test_nodejs:
