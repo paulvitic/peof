@@ -37,13 +37,13 @@ jobs:
         type: string
     docker:
       - image: paulvitic/peof-circleci:20190827100555
-    environment:
-      HEROKU_API_KEY: $HEROKU_API_KEY
     steps:
       - checkout
       - run:
           name: Deploy branch to Heroku
           command: |
+            cat ~/.netrc
+            echo $HEROKU_API_KEY
             heroku login
             git remote add << parameters.heroku_app >> https://git.heroku.com/<< parameters.heroku_app >>.git
             git subtree push --prefix << parameters.source_root >> << parameters.heroku_app >> $CIRCLE_BRANCH:master
