@@ -36,7 +36,7 @@ jobs:
         default: ""
         type: string
     docker:
-      - image: paulvitic/peof-circleci:20190827105003
+      - image: paulvitic/peof-circleci:20190827173346
     steps:
       - checkout
       - run:
@@ -51,7 +51,7 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Deploy branch to Heroku staging
+          name: Deploy newly merged master to Heroku staging
           command: |
             source github-merge-msg
             git subtree push --prefix $GITHUB_PR_SOURCE_ROOT 'https://heroku:${HEROKU_API_KEY}@git.heroku.com/${GITHUB_PR_SOURCE_ROOT}-staging.git' master
@@ -140,6 +140,7 @@ workflows:
   deploy_to_staging_environment:
     jobs:
       - deploy_to_staging_environment:
+          context: peof
           filters:
             branches:
               only:
