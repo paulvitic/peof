@@ -109,7 +109,6 @@ workflows:
           filters:
             branches:
               only:
-                # run the job only for commit to branches which start with name "organization-ui/"
                 - /organization-ui\/.*/
   build_framework_ui:
     jobs:
