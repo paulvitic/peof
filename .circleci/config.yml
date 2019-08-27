@@ -51,7 +51,7 @@ jobs:
     steps:
       - checkout
       # see: https://circleci-public.github.io/pipeline-preview-docs/pipeline_variables_reference.html
-      - run: echo "Running"
+      - run: echo "pull request url is" $CIRCLE_PULL_REQUEST
 
   #unit_test_nodejs:
 
