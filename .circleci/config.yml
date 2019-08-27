@@ -44,7 +44,6 @@ jobs:
           command: |
             cat ~/.netrc
             echo $HEROKU_API_KEY
-            heroku login
             git remote add << parameters.heroku_app >> https://git.heroku.com/<< parameters.heroku_app >>.git
             git subtree push --prefix << parameters.source_root >> << parameters.heroku_app >> $CIRCLE_BRANCH:master
 
