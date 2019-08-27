@@ -55,7 +55,7 @@ jobs:
           name: Get PR
           command: |
             printenv
-            git log -5
+            git log -1 --pretty=%B
 
 
   #unit_test_nodejs:
