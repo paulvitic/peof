@@ -122,5 +122,8 @@ RUN echo "=== finished custom scripts installation ==="
 
 
 USER circleci
+# add heroku login credentials for circleci user
+RUN touch ~/.netrc
+RUN echo 'machine api.heroku.com login paul.vitic@gmail.com password xxxxxx' >> ~/.netrc
 
 CMD ["/bin/sh"]

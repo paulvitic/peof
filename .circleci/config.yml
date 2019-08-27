@@ -36,7 +36,7 @@ jobs:
         default: ""
         type: string
     docker:
-      - image: paulvitic/peof-circleci:20190827094106
+      - image: paulvitic/peof-circleci:20190827100555
     environment:
       HEROKU_API_KEY: $HEROKU_API_KEY
     steps:
