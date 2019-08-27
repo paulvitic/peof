@@ -36,16 +36,13 @@ jobs:
         default: ""
         type: string
     docker:
-      - image: paulvitic/peof-circleci:20190826180524
+      - image: paulvitic/peof-circleci:20190827105003
     steps:
       - checkout
       - run:
           name: Deploy branch to Heroku
           command: |
-            git subtree push --prefix << parameters.source_root >> << parameters.extra_git_push_args >> \
-            https://$HEROKU_USER:$HEROKU_API_KEY@git.heroku.com/<< parameters.heroku_app >>.git \
-            $CIRCLE_BRANCH:master
-
+            git subtree push --prefix << parameters.source_root >> https://heroku:$HEROKU_API_KEY@git.heroku.com/<< parameters.heroku_app >>.git master
 
   #unit_test_nodejs:
 
@@ -109,7 +106,6 @@ workflows:
           filters:
             branches:
               only:
-                # run the job only for commit to branches which start with name "organization-ui/"
                 - /organization-ui\/.*/
   build_framework_ui:
     jobs:
