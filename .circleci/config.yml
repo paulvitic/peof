@@ -51,16 +51,9 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Extract GitHub merge message to environment variables
-          command: |
-            parse-github-merge-msg
-            echo 'export GITHUB_PR_USERNAME=$GITHUB_PR_USERNAME' >> $BASH_ENV
-            echo 'export GITHUB_PR_SOURCE_ROOT=$GITHUB_PR_SOURCE_ROOT' >> $BASH_ENV
-            echo 'export GITHUB_PR_ISSUE=$GITHUB_PR_ISSUE' >> $BASH_ENV
-            source $BASH_ENV
-      - run:
           name: Deploy branch to Heroku staging
           command: |
+            GITHUB_PR_SOURCE_ROOT=$(git log -1 --pretty=%B | grep -Po '([a-z]|\d|-)*\/' | sed "s,/$,," | awk 'NR==2')
             echo $GITHUB_PR_SOURCE_ROOT
             git subtree push --prefix $GITHUB_PR_SOURCE_ROOT 'https://heroku:${HEROKU_API_KEY}@git.heroku.com/${GITHUB_PR_SOURCE_ROOT}-staging.git' master
 
