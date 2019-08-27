@@ -54,7 +54,6 @@ jobs:
           name: Deploy branch to Heroku staging
           command: |
             source github-merge-msg
-            echo $GITHUB_PR_SOURCE_ROOT
             git subtree push --prefix $GITHUB_PR_SOURCE_ROOT 'https://heroku:${HEROKU_API_KEY}@git.heroku.com/${GITHUB_PR_SOURCE_ROOT}-staging.git' master
 
   #unit_test_nodejs:
