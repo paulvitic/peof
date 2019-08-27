@@ -41,7 +41,10 @@ jobs:
       - checkout
       - run:
           name: Deploy branch to Heroku
-          command: git push << parameters.extra_git_push_args >> https://heroku:$HEROKU_API_KEY@git.heroku.com/<< parameters.heroku_app >>.git $CIRCLE_BRANCH:master
+          command: |
+            git subtree push --prefix << parameters.source_root >> << parameters.extra_git_push_args >> \
+            https://$HEROKU_USER:$HEROKU_API_KEY@git.heroku.com/<< parameters.heroku_app >>.git \
+            $CIRCLE_BRANCH:master
 
 
   #unit_test_nodejs:
@@ -117,6 +120,7 @@ workflows:
               only:
                 - /framework-ui\/.*/
       - deploy_to_test_environment:
+          context: peof # set on CircleCI to hold secrets such as $HEROKU_API_KEY
           source_root: framework-ui
           heroku_app: framework-ui-test
           filters:
