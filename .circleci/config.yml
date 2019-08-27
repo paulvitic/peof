@@ -40,21 +40,23 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Deploy branch to Heroku
+          name: Deploy branch to Heroku testing environment
           command: |
             git subtree push --prefix << parameters.source_root >> https://heroku:$HEROKU_API_KEY@git.heroku.com/<< parameters.heroku_app >>.git master
 
   deploy_to_staging_environment:
     description: "Deploy to Heroku staging environment"
     docker:
-      - image: paulvitic/peof-circleci:20190827105003
+      - image: paulvitic/peof-circleci:20190827163431
     steps:
       - checkout
-      # see: https://circleci-public.github.io/pipeline-preview-docs/pipeline_variables_reference.html
       - run:
-          name: Get PR
+          name: Extract GitHub merge message to environment variables
+          command: parse-github-merge-msg
+      - run:
+          name: Deploy branch to Heroku staging
           command: |
-            git log -1 --pretty=%B | grep -Po '([a-z]|\d|-)*\/' | sed "s,/$,,"
+            git subtree push --prefix $GITHUB_PR_SOURCE_ROOT https://heroku:$HEROKU_API_KEY@git.heroku.com/$GITHUB_PR_SOURCE_ROOT-staging.git master
 
 
   #unit_test_nodejs:
