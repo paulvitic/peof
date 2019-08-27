@@ -44,6 +44,15 @@ jobs:
           command: |
             git subtree push --prefix << parameters.source_root >> https://heroku:$HEROKU_API_KEY@git.heroku.com/<< parameters.heroku_app >>.git master
 
+  deploy_to_staging_environment:
+    description: "Deploy to Heroku staging environment"
+    docker:
+      - image: paulvitic/peof-circleci:20190827105003
+    steps:
+      - checkout
+      # see: https://circleci-public.github.io/pipeline-preview-docs/pipeline_variables_reference.html
+      - run: echo "pull request url is" $CIRCLE_PULL_REQUEST
+
   #unit_test_nodejs:
 
   #integration_test_nodejs:
@@ -125,3 +134,10 @@ workflows:
                 - /framework-ui\/.*/
           requires:
             - code_analysis_nodejs
+  deploy_to_staging_environment:
+    jobs:
+      - deploy_to_staging_environment:
+          filters:
+            branches:
+              only:
+                - master
