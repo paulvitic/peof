@@ -134,7 +134,7 @@ workflows:
                 - /framework-ui\/.*/
           requires:
             - code_analysis_nodejs
-  deploy_to_staging_environment:
+  deploy_to_staging:
     jobs:
       - deploy_to_staging_environment:
           filters:
