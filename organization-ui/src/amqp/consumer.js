@@ -10,6 +10,8 @@ export function InitRabbitMQ() {
   const { queue: { host, port } } = config;
   const RABBIT_MQ_URL = `amqp://${host}:${port}`;
 
+  console.log(process.env);
+
   amqp.connect(RABBIT_MQ_URL + '?heartbeat=60', function(err, conn) {
     if (err) {
       console.error('[AMQP]', err.message);
