@@ -42,10 +42,10 @@ workflows:
     jobs:
       - build
       - deploy_heroku:
-          heroku_app: *review_server # change this
+          heroku_app: *review_server # see aliases above
           extra_git_push_args: -f
           requires:
             - build
           filters:
             branches:
-              only: *review_branch # change this
+              only: *review_branch # see aliases above
