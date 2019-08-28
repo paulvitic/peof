@@ -21,5 +21,7 @@ app.use('/organization', express.static('./build'));
 app.use('/company-list', renderCompanyList);
 
 const { app: { port } } = config;
-app.listen(port);
+// if PORT env. variable exists use it as port otherwise use value from config file
+const PORT = process.env.PORT || port;
+app.listen(PORT);
 console.log(`[info] server started at port ${port}. Fragments are available here...`);
