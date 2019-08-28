@@ -3,7 +3,8 @@ import config from '../config';
 
 export function InitMongoDb() {
   const { db: { host, port, name, user, password } } = config;
-  const DB_URL = `mongodb://${user}:${password}@${host}:${port}/${name}`;
+  const DB_URL = process.env.MONGODB_URI || `mongodb://${user}:${password}@${host}:${port}/${name}`;
+
   mongoose.connect(DB_URL, {useNewUrlParser: true});
   const db = mongoose.connection;
   db.on('error', console.error.bind(console, 'connection error:'));

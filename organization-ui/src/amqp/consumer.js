@@ -8,7 +8,8 @@ let amqpConn = null;
 
 export function InitRabbitMQ() {
   const { queue: { host, port } } = config;
-  const RABBIT_MQ_URL = `amqp://${host}:${port}`;
+  // if CLOUDAMQP_URL exists in env. variables use it as rabbitMQ URL otherwise use config file
+  const RABBIT_MQ_URL = process.env.CLOUDAMQP_URL || `amqp://${host}:${port}`;
 
   amqp.connect(RABBIT_MQ_URL + '?heartbeat=60', function(err, conn) {
     if (err) {
