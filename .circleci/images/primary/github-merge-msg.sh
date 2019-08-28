@@ -15,7 +15,7 @@ echo "Pull request was for '${GITHUB_PR_ISSUE}' for sub source directory '${GITH
 
 echo $GITHUB_PR_SOURCE_ROOT > /tmp/workspace/github_pr_source_root.txt
 
-# we may not need to export
-export GITHUB_PR_SOURCE_ROOT=$GITHUB_PR_SOURCE_ROOT
-export GITHUB_PR_USERNAME=$GITHUB_PR_USERNAME
-export GITHUB_PR_ISSUE=$GITHUB_PR_ISSUE
+# we may not need to export as we are not anymore sourcing this script
+#export GITHUB_PR_SOURCE_ROOT=$GITHUB_PR_SOURCE_ROOT
+#export GITHUB_PR_USERNAME=$GITHUB_PR_USERNAME
+#export GITHUB_PR_ISSUE=$GITHUB_PR_ISSUE
