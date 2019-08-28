@@ -22,7 +22,7 @@
 Example:
 ```$xslt
 https://intranet.smava.de/jira/rest/auth/1/session
-{ "username": "pvitic", "password": "jutta1805" }
+{ "username": "some_user", "password": "some_password" }
 Response:
 {
     "session": {
