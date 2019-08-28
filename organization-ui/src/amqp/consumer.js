@@ -8,7 +8,7 @@ let amqpConn = null;
 
 export function InitRabbitMQ() {
   const { queue: { host, port } } = config;
-  const RABBIT_MQ_URL = `amqp://${host}:${port}`;
+  const RABBIT_MQ_URL = process.env.CLOUDAMQP_URL || `amqp://${host}:${port}`;
 
   console.log(process.env);
 
