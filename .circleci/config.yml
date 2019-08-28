@@ -94,7 +94,7 @@ jobs:
 
   integration_test_go:
     docker:
-      - image: *peof_primary_go_image
+      - *peof_primary_go_image
       - image: circleci/mongo:4
         environment:
           ENV MONGO_INITDB_ROOT_USERNAME: root
