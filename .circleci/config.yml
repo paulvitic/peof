@@ -134,6 +134,16 @@ jobs:
 
 workflows:
   version: 2
+  build_organization:
+    jobs:
+      - deploy_to_development:
+          context: peof
+          source_root: organization
+          heroku_app: organization-test
+          filters:
+            branches:
+              only:
+                - /organization\/.*/
   build_organization_ui:
     jobs:
       - code_analysis_nodejs:
