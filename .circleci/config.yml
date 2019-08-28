@@ -149,7 +149,7 @@ workflows:
               only:
                 - /organization-ui\/.*/
           requires:
-            - code_analysis_nodejs                -
+            - code_analysis_nodejs
   build_framework_ui:
     jobs:
       - code_analysis_nodejs:
