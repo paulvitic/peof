@@ -54,7 +54,8 @@ jobs:
       - run:
           name: Deploy branch to Heroku testing environment
           command: |
-            git subtree push --prefix << parameters.source_root >> https://heroku:$HEROKU_API_KEY@git.heroku.com/<< parameters.heroku_app >>.git master
+            git subtree push --prefix << parameters.source_root >> \
+              https://heroku:$HEROKU_API_KEY@git.heroku.com/<< parameters.heroku_app >>.git master
 
   #unit_test_nodejs:
 
@@ -89,6 +90,7 @@ jobs:
       - checkout
       - run:
           name: Deploy newly merged master to Heroku staging
+          # add git subtree push to production Heroku app
           command: |
             echo `cat /tmp/workspace/github_pr_source_root.txt`
 
