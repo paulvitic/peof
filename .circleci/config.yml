@@ -142,6 +142,16 @@ workflows:
             branches:
               only:
                 - /organization-ui\/.*/
+      - deploy_to_development:
+          context: peof # set on CircleCI at hold secrets such as $HEROKU_API_KEY
+          source_root: organization-ui
+          heroku_app: organization-ui-test
+          filters:
+            branches:
+              only:
+                - /organization-ui\/.*/
+          requires:
+            - code_analysis_nodejs
   build_framework_ui:
     jobs:
       - code_analysis_nodejs:
