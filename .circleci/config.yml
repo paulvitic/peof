@@ -1,4 +1,17 @@
 version: 2.1
+
+anchors:
+  peof_primary_image: &peof_primary_image
+    image: paulvitic/peof-circleci:20190828123359
+  peof_primary_nodejs_image: &peof_primary_nodejs_image
+    image: paulvitic/peof-circleci-nodejs:20190828123637
+  peof_primary_go_image: &peof_primary_go_image
+    image: paulvitic/peof-circleci-go:20190828123805
+  workspace_root: &workspace_root /tmp/workspace
+  attach_workspace: &attach_workspace
+    attach_workspace:
+      at: *workspace_root
+
 jobs:
   code_analysis_nodejs:
     description: "Static code analysis on Nodejs app"
@@ -7,22 +20,21 @@ jobs:
         description: "Which sub folder is being built."
         type: string
     docker:
-      - image: paulvitic/peof-circleci-nodejs:20190826180803
+      - *peof_primary_nodejs_image
     steps:
       - checkout
       - run:
           name: Static code analysis with Eslint
           command: |
-            pwd
-            cd /home/circleci/project/<< parameters.source_root >>
+            cd ~/project/<< parameters.source_root >>
             npm install
-            eslint ./src --format junit --output-file /home/circleci/project/<< parameters.source_root >>/reports/eslint.xml
+            eslint ./src --format junit --output-file ~/project/<< parameters.source_root >>/reports/eslint.xml
       - store_test_results:
-          path: /home/circleci/project/<< parameters.source_root >>/reports
+          path: ~/project/<< parameters.source_root >>/reports
       - store_artifacts:
-          path: /home/circleci/project/<< parameters.source_root >>/reports
+          path: ~/project/<< parameters.source_root >>/reports
 
-  deploy_to_test_environment:
+  deploy_to_development:
     description: "Deploy to Heroku test environment"
     parameters:
       source_root:
@@ -36,7 +48,7 @@ jobs:
         default: ""
         type: string
     docker:
-      - image: paulvitic/peof-circleci:20190827173346
+      - *peof_primary_image
     steps:
       - checkout
       - run:
@@ -44,63 +56,73 @@ jobs:
           command: |
             git subtree push --prefix << parameters.source_root >> https://heroku:$HEROKU_API_KEY@git.heroku.com/<< parameters.heroku_app >>.git master
 
-  deploy_to_staging_environment:
-    description: "Deploy to Heroku staging environment"
-    docker:
-      - image: paulvitic/peof-circleci:20190827173346
-    steps:
-      - checkout
-      - run:
-          name: Deploy newly merged master to Heroku staging
-          command: |
-            source github-merge-msg
-            git subtree push --prefix $GITHUB_PR_SOURCE_ROOT https://heroku:$HEROKU_API_KEY@git.heroku.com/${GITHUB_PR_SOURCE_ROOT}-staging.git master
-
   #unit_test_nodejs:
 
   #integration_test_nodejs:
 
   #code_analysis_go:
 
-  build:
+  deploy_to_staging:
+    description: "Deploy to Heroku staging environment"
     docker:
-      - image: paulvitic/peof-circleci:20190803185216
+      - *peof_primary_image
+    steps:
+      - *attach_workspace
+      - checkout
+      - run:
+          name: Deploy newly merged master to Heroku staging
+          command: |
+            github-merge-msg
+            git subtree push --prefix $(</tmp/workspace/github_pr_source_root.txt) \
+              https://heroku:$HEROKU_API_KEY@git.heroku.com/$(</tmp/workspace/github_pr_source_root.txt)-staging.git master
+      - persist_to_workspace:
+          root: *workspace_root
+          paths:
+            - github_pr_source_root.txt
 
+  deploy_to_production:
+    description: "Deploy to Heroku production environment"
+    docker:
+      - *peof_primary_image
+    steps:
+      - *attach_workspace
+      - checkout
+      - run:
+          name: Deploy newly merged master to Heroku staging
+          command: |
+            echo `cat /tmp/workspace/github_pr_source_root.txt`
+
+  integration_test_go:
+    docker:
+      - image: *peof_primary_go_image
       - image: circleci/mongo:4
         environment:
           ENV MONGO_INITDB_ROOT_USERNAME: root
           ENV MONGO_INITDB_ROOT_PASSWORD: password
           ENV MONGO_INITDB_DATABASE: admin
-
       - image: rabbitmq:3
         environment:
           RABBITMQ_DEFAULT_USER: guest
           RABBITMQ_DEFAULT_PASS: guest
           RABBITMQ_DEFAULT_VHOST: /
-
     steps:
       - checkout
-
       - run:
           name: Wait for RabbitMQ
           command: wait-for-container RabbitMQ localhost 5672 20
-
       - run:
           name: Wait for MongoDB
           command: wait-for-container MongoDB localhost 27017 20
-
       - run:
           name: Initialize MongoDB
           command: |
             mongo localhost:27017 < /home/circleci/mongo/mongo-init.js
-
       - run:
           name: Copy organization source into GOPATH src directory and pull all dependencies
           command: |
             cp -r /home/circleci/project/organization/src/organization.peof /go/src/organization.peof
             cd /go/src/organization.peof
             go get -v -t -d ./...
-
       - run:
           name: Execute tests
           environment:
@@ -108,10 +130,9 @@ jobs:
           command: |
             go test -v ./...
 
-
 workflows:
   version: 2
-  code_analysis_organization-ui:
+  build_organization_ui:
     jobs:
       - code_analysis_nodejs:
           source_root: organization-ui
@@ -127,8 +148,8 @@ workflows:
             branches:
               only:
                 - /framework-ui\/.*/
-      - deploy_to_test_environment:
-          context: peof # set on CircleCI to hold secrets such as $HEROKU_API_KEY
+      - deploy_to_development:
+          context: peof # set on CircleCI at hold secrets such as $HEROKU_API_KEY
           source_root: framework-ui
           heroku_app: framework-ui-test
           filters:
@@ -137,11 +158,23 @@ workflows:
                 - /framework-ui\/.*/
           requires:
             - code_analysis_nodejs
-  deploy_to_staging_environment:
+  deploy:
     jobs:
-      - deploy_to_staging_environment:
+      - deploy_to_staging:
           context: peof
           filters:
             branches:
               only:
                 - master
+      - request-testing:
+          type: approval
+          requires:
+            - deploy_to_staging
+      - deploy_to_production:
+          context: peof
+          filters:
+            branches:
+              only:
+                - master
+          requires:
+            - request-testing      -
