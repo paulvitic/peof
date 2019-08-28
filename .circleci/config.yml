@@ -177,4 +177,4 @@ workflows:
               only:
                 - master
           requires:
-            - request-testing      -
+            - request-testing
