@@ -4,14 +4,21 @@ FROM node:11
 RUN mkdir -p /code
 WORKDIR /code
 
-# Install app dependencies
+# copy dependency configuration and run commands
 COPY package.json /code/
+# install dependencies
 RUN npm install
+
+# copy build configuration
 COPY webpack.config.js /code/
 
-# Bundle app source
+# copy static code analysis configuration
+COPY .eslintrc /code/
+
+# copy application source code
 COPY ./src /code/src
 
 EXPOSE 3002
-#CMD [ "./node_modules/.bin/nodemon", "--watch", "./src", "--exec", "npm", "start" ]
+
+# run build and start
 CMD [ "npm", "start" ]
