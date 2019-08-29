@@ -2,13 +2,13 @@ package eventStore
 
 import (
 	"context"
+	"github.com/paulvitic/peof/organization/config"
+	"github.com/paulvitic/peof/organization/domain"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"log"
-	"organization.peof/config"
-	"organization.peof/domain"
 	"time"
 )
 

@@ -1,9 +1,9 @@
 package rest
 
 import (
+	"github.com/paulvitic/peof/organization/config"
 	"log"
 	"net/http"
-	"organization.peof/config"
 	"os"
 
 	"github.com/gorilla/mux"

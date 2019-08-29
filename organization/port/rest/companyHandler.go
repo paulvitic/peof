@@ -4,12 +4,12 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gorilla/mux"
+	"github.com/paulvitic/peof/organization/service"
 	"github.com/unrolled/render"
 	"io"
 	"io/ioutil"
 	"log"
 	"net/http"
-	"organization.peof/service"
 )
 
 type CompanyHandler struct {

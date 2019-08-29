@@ -2,9 +2,9 @@ package message
 
 import (
 	"encoding/json"
+	"github.com/paulvitic/peof/organization/domain"
 	"github.com/streadway/amqp"
 	"log"
-	"organization.peof/domain"
 )
 
 // AmqpEventPublisher is used as anchor for dispatch messsage method for real
@@ -28,11 +28,11 @@ func NewAmqpEventPublisher(url string) *AmqpEventPublisher {
 
 	q, err := ch.QueueDeclare(
 		domain.CompanyAggregate, // name
-		true,  // durable
-		false, // delete when unused
-		false, // exclusive
-		false, // no-wait
-		nil,   // arguments
+		true,                    // durable
+		false,                   // delete when unused
+		false,                   // exclusive
+		false,                   // no-wait
+		nil,                     // arguments
 	)
 	failOnError(err, "failed to declare a queue")
 

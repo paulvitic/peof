@@ -1,3 +1,10 @@
+## Go Build
+
+Once you are at the root of this project set GOPATH 
+
+```GOPATH=$(pwd):$GOPATH```
+
+
 #### Sheet
 * https://developers.google.com/sheets/api/quickstart/go
 
