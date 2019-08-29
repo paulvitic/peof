@@ -6,7 +6,7 @@
   "main": "src/server.js",
   "scripts": {
     "build": "eslint --fix src && webpack -p",
-    "server": "NODE_ENV=dev nodemon index.js",
+    "server": "nodemon index.js",
     "start": "npm run build; npm run server",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
