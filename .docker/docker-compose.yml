@@ -5,7 +5,7 @@ services:
     ports:
       - "5000:5000/udp"
     volumes:
-      - ./.docker/logStash:/app
+      - ./logStash:/app
     command: logstash -f /app/logstash.conf
 
   rabbitmq:
@@ -26,7 +26,7 @@ services:
         tag: "rabbitmq"
 
   mongo:
-    build: ./.docker/mongoDb/
+    build: ./mongoDb/
     #restart: always
     ports:
       - 27017:27017
@@ -54,7 +54,7 @@ services:
 
   organization:
     #image: peof/organization/latest:latest
-    build: organization/
+    build: ../organization/
     ports:
       - "3001:3001"
     depends_on:
@@ -68,7 +68,7 @@ services:
         tag: "organization"
 
   organization-ui:
-    build: organization-ui/
+    build: ../organization-ui/
     ports:
       - "3002:3002"
     depends_on:
@@ -84,8 +84,8 @@ services:
   nginx:
     image: nginx:1-alpine
     volumes:
-      - ./.docker/nginx/nginx.conf:/etc/nginx/conf.d/nginx.conf
-      - ./.docker/nginx/common:/usr/share/nginx/html/common
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/nginx.conf
+      - ./nginx/common:/usr/share/nginx/html/common
     ports:
       - "3000:3000"
     depends_on:

@@ -1,8 +1,8 @@
 package service
 
 import (
+	"github.com/paulvitic/peof/organization/domain"
 	"log"
-	"organization.peof/domain"
 )
 
 const (

@@ -5,19 +5,26 @@ RUN apk update && apk upgrade && \
     apk add --no-cache curl wget
 
 ## build the go executable
-FROM golang:1.11 AS go-builder
-COPY ./src/organization.peof /go/src/organization.peof
-RUN cd /go/src/organization.peof && \
-    go get ./... && \
-    CGO_ENABLED=0 GOOS=linux go build -a -ldflags '-extldflags "-static"' -o /organization
+FROM golang:1.12 AS go-builder
+
+ENV GO111MODULE=on
+
+WORKDIR /app
+COPY go.mod .
+COPY go.sum .
+RUN go mod download
+
+COPY . .
+
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o organization
 
 ## final stage
 FROM base
-ENV WEBROOT web
-COPY --from=go-builder /organization /app/organization
+COPY --from=go-builder /app/organization /app/organization
 COPY ./properties.json /app/properties.json
 
 WORKDIR /app
+
 #RUN chmod +x ./organization
 CMD ["./organization"]
 

@@ -5,7 +5,7 @@ import (
 	"reflect"
 	"testing"
 
-	"organization.peof/domain"
+	"github.com/paulvitic/peof/organization/domain"
 )
 
 type FakeMessageDispatcher struct {
@@ -43,7 +43,7 @@ func TestCompanyService_CreateCompany(t *testing.T) {
 		wantNewCompany *domain.Company
 		wantErr        bool
 	}{
-	// TODO: Add test cases.
+		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -70,7 +70,7 @@ func TestCompanyService_ChangeCompanyName(t *testing.T) {
 		wantUpdatedCompany *domain.Company
 		wantErr            bool
 	}{
-	// TODO: Add test cases.
+		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

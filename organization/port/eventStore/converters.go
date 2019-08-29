@@ -1,7 +1,7 @@
 package eventStore
 
 import (
-	"organization.peof/domain"
+	"github.com/paulvitic/peof/organization/domain"
 )
 
 func toEventLog(event domain.Event) mongoEventLog {

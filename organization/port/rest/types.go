@@ -1,7 +1,7 @@
 package rest
 
 import (
-	"organization.peof/domain"
+	"github.com/paulvitic/peof/organization/domain"
 )
 
 const (

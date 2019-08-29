@@ -1,6 +1,3 @@
-// https://hackernoon.com/how-to-turn-react-component-into-native-web-component-84834315cb24
-// https://reactjs.org/docs/web-components.html
-
 import ReactDOM from 'react-dom';
 import React from 'react';
 import { ReactCompanyList } from '../components/company';

@@ -1,13 +1,14 @@
 package main
 
 import (
-	"organization.peof/config"
-	"organization.peof/domain"
-	"organization.peof/port/eventStore"
-	"organization.peof/port/message"
-	"organization.peof/port/rest"
-	"organization.peof/service"
 	"os"
+
+	"github.com/paulvitic/peof/organization/config"
+	"github.com/paulvitic/peof/organization/domain"
+	"github.com/paulvitic/peof/organization/port/eventStore"
+	"github.com/paulvitic/peof/organization/port/message"
+	"github.com/paulvitic/peof/organization/port/rest"
+	"github.com/paulvitic/peof/organization/service"
 )
 
 func main() {

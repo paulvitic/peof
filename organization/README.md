@@ -1,3 +1,10 @@
+## Go Build
+
+Once you are at the root of this project set GOPATH 
+
+```GOPATH=$(pwd):$GOPATH```
+
+
 #### Sheet
 * https://developers.google.com/sheets/api/quickstart/go
 
@@ -22,7 +29,7 @@
 Example:
 ```$xslt
 https://intranet.smava.de/jira/rest/auth/1/session
-{ "username": "pvitic", "password": "jutta1805" }
+{ "username": "some_user", "password": "some_password" }
 Response:
 {
     "session": {
