@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 DIR=$(pwd)
-COMPOSE_FILE=$DIR/docker-compose.yml
+COMPOSE_FILE=$DIR/.docker/docker-compose.yml
 PROJECT_NAME=peof
 LOG_AGGREGATOR_SERVICE=logstash
 
