@@ -1,6 +1,6 @@
 version: 2.1
 
-anchors:
+aliases:
   peof_primary_image: &peof_primary_image
     image: paulvitic/peof-circleci:20190828123359
   peof_primary_nodejs_image: &peof_primary_nodejs_image
@@ -34,6 +34,27 @@ jobs:
       - store_artifacts:
           path: ~/project/<< parameters.source_root >>/reports
 
+  unit_test_nodejs:
+    description: "Unit test on Nodejs app"
+    parameters:
+      source_root:
+        description: "Which sub folder is being built."
+        type: string
+    docker:
+      - *peof_primary_nodejs_image
+    steps:
+      - checkout    -
+      - run:
+          name: "JavaScript Test Suite"
+          # yarn here makes sure we are using the local jest binary
+          command: yarn jest -- --ci --testResultsProcessor="jest-junit"
+          environment:
+            JEST_JUNIT_OUTPUT: "reports/junit/js-test-results.xml"
+      - store_test_results:
+          path: reports/junit
+      - store_artifacts:
+          path: reports/junit
+
   deploy_to_development:
     description: "Deploy to Heroku test environment"
     parameters:
@@ -56,8 +77,6 @@ jobs:
           command: |
             git subtree push --prefix << parameters.source_root >> \
               https://heroku:$HEROKU_API_KEY@git.heroku.com/<< parameters.heroku_app >>.git master
-
-  #unit_test_nodejs:
 
   #integration_test_nodejs:
 
@@ -171,7 +190,7 @@ workflows:
               only:
                 - /framework-ui\/.*/
       - deploy_to_development:
-          context: peof # set on CircleCI at hold secrets such as $HEROKU_API_KEY
+          context: peof # set on CircleCI to hold secrets such as $HEROKU_API_KEY
           source_root: framework-ui
           heroku_app: framework-ui-test
           filters:
