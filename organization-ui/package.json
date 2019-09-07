@@ -6,6 +6,7 @@
   "jest": {
     "verbose": true,
     "setupFilesAfterEnv": ["<rootDir>src/setupTests.js"],
+    "testResultsProcessor": "jest-junit",
     "snapshotSerializers": [
       "enzyme-to-json/serializer"
     ],
@@ -14,10 +15,14 @@
       "node_modules/enzyme/"
     ]
   },
+  "jest-junit": {
+    "suiteName": "Test Suite",
+    "output": "./reports/junit/js-test-results.xml"
+  },
   "main": "src/server.js",
   "scripts": {
     "build": "eslint --fix src && webpack -p",
-    "test": "jest",
+    "test": "jest --ci --testResultsProcessor='jest-junit'",
     "server": "nodemon index.js",
     "start": "npm run build; npm run server"
   },
@@ -46,6 +51,7 @@
     "enzyme-adapter-react-16": "^1.14.0",
     "enzyme-to-json": "^3.4.0",
     "jest": "^24.9.0",
+    "jest-junit": "^8.0.0",
     "react-addons-test-utils": "^15.6.2",
     "nodemon": "^1.19.1",
     "concurrently": "^3.6.1",

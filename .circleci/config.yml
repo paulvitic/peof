@@ -59,7 +59,8 @@ jobs:
           # yarn here makes sure we are using the local jest binary
           command: |
             cd ~/project/<< parameters.source_root >>
-            yarn jest -- --ci --testResultsProcessor="jest-junit"
+            npm install
+            npm run test
           environment:
             JEST_JUNIT_OUTPUT: "reports/junit/js-test-results.xml"
       - store_test_results:
