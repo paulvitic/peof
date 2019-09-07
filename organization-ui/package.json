@@ -6,7 +6,7 @@
   "main": "src/server.js",
   "scripts": {
     "build": "eslint --fix src && webpack -p",
-    "test": "jest --ci --reporters=default --reporters=jest-junit",
+    "test": "jest --ci",
     "server": "nodemon index.js",
     "start": "npm run build; npm run server"
   },
