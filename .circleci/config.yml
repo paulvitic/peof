@@ -78,8 +78,7 @@ jobs:
       - run:
           name: Run Tests
           environment:
-            JEST_JUNIT_OUTPUT_DIR: reports/junit
-            JEST_JUNIT_OUTPUT_NAME: js-test-results.xml
+            JEST_JUNIT_OUTPUT: reports/junit/js-test-results.xml
           command: |
             cd ~/project/<< parameters.source_root >>
             npm test
