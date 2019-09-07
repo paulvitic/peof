@@ -1,4 +1,4 @@
-FROM paulvitic/peof-circleci:20190828123359
+FROM 332197038802.dkr.ecr.eu-central-1.amazonaws.com/peof-circleci:latest
 
 USER root
 

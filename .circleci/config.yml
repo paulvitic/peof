@@ -1,18 +1,22 @@
 version: 2.1
 
 aliases:
-  peof_primary_image_aws: &peof_primary_image_aws
-    image: 332197038802.dkr.ecr.eu-central-1.amazonaws.com/peof-circleci
+  peof_primary_image: &peof_primary_image
+    image: 332197038802.dkr.ecr.eu-central-1.amazonaws.com/peof-circleci:latest
     # set in CircleCI project environment variables
     aws_auth:
-      aws_access_key_id: $AWS_ECR_ACCESS_KEY_ID
-      aws_secret_access_key: $AWS_ECR_SECRET_ACCESS_KEY
-  peof_primary_image: &peof_primary_image
-    image: paulvitic/peof-circleci:20190907101552
+      aws_access_key_id: $AWS_ACCESS_KEY_ID
+      aws_secret_access_key: $AWS_SECRET_ACCESS_KEY
   peof_primary_nodejs_image: &peof_primary_nodejs_image
-    image: paulvitic/peof-circleci-nodejs:20190828123637
+    image: 332197038802.dkr.ecr.eu-central-1.amazonaws.com/peof-circleci-nodejs:latest
+    aws_auth:
+      aws_access_key_id: $AWS_ACCESS_KEY_ID
+      aws_secret_access_key: $AWS_SECRET_ACCESS_KEY
   peof_primary_go_image: &peof_primary_go_image
-    image: paulvitic/peof-circleci-go:20190828123805
+    image: 332197038802.dkr.ecr.eu-central-1.amazonaws.com/peof-circleci-go:latest
+    aws_auth:
+      aws_access_key_id: $AWS_ACCESS_KEY_ID
+      aws_secret_access_key: $AWS_SECRET_ACCESS_KEY
   workspace_root: &workspace_root /tmp/workspace
   attach_workspace: &attach_workspace
     attach_workspace:
@@ -61,7 +65,7 @@ jobs:
       - store_artifacts:
           path: reports/junit
 
-  push_container_to_test_repo:
+  push_container_to_dev_repo:
     description: "push the container built from the development branch to test repository."
     parameters:
       source_root:
@@ -75,12 +79,13 @@ jobs:
       - run:
           name: "build docker image from feature branch"
           command: |
-            TAG="$(date +'%Y%m%d')"-"$(git rev-parse --short HEAD)"
-            printenv
+            TAG="$(git rev-parse --short HEAD)"
+            IMAGE=332197038802.dkr.ecr.eu-central-1.amazonaws.com/peof-<< parameters.source_root >>-dev
+#            printenv
             cd ~/project/<< parameters.source_root >>
             source <(aws ecr get-login --region eu-central-1 --no-include-email)
-            docker build -t 332197038802.dkr.ecr.eu-central-1.amazonaws.com/test-repository:${TAG} .
-            docker push 332197038802.dkr.ecr.eu-central-1.amazonaws.com/test-repository:${TAG}
+            docker build -t ${IMAGE}:${TAG} .
+            docker push ${IMAGE}:${TAG}
 
   deploy_to_development:
     description: "Deploy to Heroku test environment"
@@ -182,10 +187,8 @@ workflows:
   version: 2
   build_organization:
     jobs:
-      - deploy_to_development:
-          context: peof
+      - push_container_to_dev_repo:
           source_root: organization
-          heroku_app: organization-test
           filters:
             branches:
               only:
@@ -198,8 +201,7 @@ workflows:
             branches:
               only:
                 - /organization-ui\/.*/
-      - push_container_to_test_repo:
-          context: peof
+      - unit_test_nodejs:
           source_root: organization-ui
           filters:
             branches:
@@ -207,16 +209,24 @@ workflows:
                 - /organization-ui\/.*/
           requires:
             - code_analysis_nodejs
-      - deploy_to_development:
-          context: peof # set on CircleCI. Hold secrets such as $HEROKU_API_KEY
+      - push_container_to_dev_repo:
           source_root: organization-ui
-          heroku_app: organization-ui-test
           filters:
             branches:
               only:
                 - /organization-ui\/.*/
           requires:
-            - code_analysis_nodejs
+            - unit_test_nodejs
+#      - deploy_to_development:
+#          context: peof # set on CircleCI. Hold secrets such as $HEROKU_API_KEY
+#          source_root: organization-ui
+#          heroku_app: organization-ui-test
+#          filters:
+#            branches:
+#              only:
+#                - /organization-ui\/.*/
+#          requires:
+#            - code_analysis_nodejs
   build_framework_ui:
     jobs:
       - code_analysis_nodejs:
@@ -225,10 +235,8 @@ workflows:
             branches:
               only:
                 - /framework-ui\/.*/
-      - deploy_to_development:
-          context: peof # set on CircleCI to hold secrets such as $HEROKU_API_KEY
+      - push_container_to_dev_repo:
           source_root: framework-ui
-          heroku_app: framework-ui-test
           filters:
             branches:
               only:
