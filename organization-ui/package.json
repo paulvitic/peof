@@ -3,24 +3,10 @@
   "version": "0.0.0",
   "private": true,
   "description": "",
-  "jest": {
-    "verbose": true,
-    "setupFilesAfterEnv": [
-      "<rootDir>src/setupTests.js"
-    ],
-    "reporters": ["default", "jest-junit"],
-    "snapshotSerializers": [
-      "enzyme-to-json/serializer"
-    ],
-    "unmockedModulePathPatterns": [
-      "node_modules/react/",
-      "node_modules/enzyme/"
-    ]
-  },
   "main": "src/server.js",
   "scripts": {
     "build": "eslint --fix src && webpack -p",
-    "test": "jest --ci",
+    "test": "jest --ci --reporters=default --reporters=jest-junit JEST_JUNIT_OUTPUT_DIR=reports/junit JEST_JUNIT_OUTPUT_NAME=js-test-results.xml ",
     "server": "nodemon index.js",
     "start": "npm run build; npm run server"
   },
@@ -56,5 +42,26 @@
     "webpack": "^4.18.1",
     "webpack-cli": "^3.1.0",
     "webpack-dev-server": "^3.1.8"
+  },
+  "jest": {
+    "verbose": true,
+    "setupFilesAfterEnv": [
+      "<rootDir>src/setupTests.js"
+    ],
+    "reporters": [
+      "default",
+      "jest-junit"
+    ],
+    "snapshotSerializers": [
+      "enzyme-to-json/serializer"
+    ],
+    "unmockedModulePathPatterns": [
+      "node_modules/react/",
+      "node_modules/enzyme/"
+    ]
+  },
+  "jest-junit": {
+    "output": "reports/junit/js-test-results.xml",
+    "usePathForSuiteName": "true"
   }
 }
