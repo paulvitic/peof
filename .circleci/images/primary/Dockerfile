@@ -90,8 +90,13 @@ RUN echo "=== finished Docker installation ==="
 
 
 RUN echo "=== starting AWS CLI installation ==="
+# we need to install aws with pip because otherwise some aws commands are not available with apt-get
 RUN apt-get install -y python3-pip
+# switch to circleci user so that python installs aws cli in cicrleci users path
+USER circleci
 RUN pip3 install awscli --upgrade --user
+# switch back to root
+USER root
 #RUN apt-get update && apt-get install -y awscli
 RUN echo "=== finished AWS CLI installation ==="
 
