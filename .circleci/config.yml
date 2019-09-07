@@ -77,11 +77,13 @@ jobs:
             - /home/circleci/.npm
       - run:
           name: Run Tests
+          environment:
+            JEST_JUNIT_OUTPUT_DIR: ~/project/<< parameters.source_root >>/reports/junit
+            JEST_JUNIT_OUTPUT_NAME: js-test-results.xml
+            JEST_JUNIT_OUTPUT: ~/project/<< parameters.source_root >>/reports/junit/js-test-results.xml
           command: |
             cd ~/project/<< parameters.source_root >>
-            jest --ci --runInBand --reporters=default --reporters=jest-junit \
-              JEST_JUNIT_OUTPUT_DIR="~/project/<< parameters.source_root >>/reports/junit" \
-              JEST_JUNIT_OUTPUT_NAME="js-test-results.xml"
+            jest --ci --runInBand --reporters=default --reporters=jest-junit
       #- run:
       #    name: "JavaScript Test Suite"
           # yarn here makes sure we are using the local jest binary
