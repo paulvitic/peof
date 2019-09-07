@@ -61,7 +61,12 @@
     ]
   },
   "jest-junit": {
-    "output": "reports/junit/js-test-results.xml",
+    "suiteName": "jest tests",
+    "outputDirectory": "./reports/junit",
+    "outputName": "js-test-results.xml",
+    "classNameTemplate": "{classname}-{title}",
+    "titleTemplate": "{classname}-{title}",
+    "ancestorSeparator": " › ",
     "usePathForSuiteName": "true"
   }
 }
