@@ -2,7 +2,7 @@ version: 2.1
 
 aliases:
   peof_primary_image: &peof_primary_image
-    image: paulvitic/peof-circleci:20190907100225
+    image: paulvitic/peof-circleci:20190907101552
   peof_primary_nodejs_image: &peof_primary_nodejs_image
     image: paulvitic/peof-circleci-nodejs:20190828123637
   peof_primary_go_image: &peof_primary_go_image
