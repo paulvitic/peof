@@ -54,19 +54,38 @@ jobs:
       - *peof_primary_nodejs_image
     steps:
       - checkout
+      - restore_cache:
+          key: << parameters.source_root >>-npm-cache-v1-{{ checksum "package-lock.json" }}
       - run:
-          name: "JavaScript Test Suite"
-          # yarn here makes sure we are using the local jest binary
+          name: Install Dependencies
           command: |
             cd ~/project/<< parameters.source_root >>
-            npm install
-            npm run test
+            npm ci
+      - save_cache:
+          key: << parameters.source_root >>-npm-cache-v1-{{ checksum "package-lock.json" }}
+          paths:
+            - /home/circleci/.npm
+      - run:
+          name: Run Tests
           environment:
             JEST_JUNIT_OUTPUT: "reports/junit/js-test-results.xml"
+          command: |
+            cd ~/project/<< parameters.source_root >>
+            npm test
+      #- run:
+      #    name: "JavaScript Test Suite"
+          # yarn here makes sure we are using the local jest binary
+      #    command: |
+      #      cd ~/project/<< parameters.source_root >>
+      #      npm install
+      #      npm run test
+      #    environment:
+      #      JEST_JUNIT_OUTPUT: "reports/junit/js-test-results.xml"
       - store_test_results:
           path: reports/junit
       - store_artifacts:
           path: reports/junit
+
 
   push_container_to_dev_repo:
     description: "push the container built from the development branch to test repository."

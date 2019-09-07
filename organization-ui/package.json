@@ -5,8 +5,10 @@
   "description": "",
   "jest": {
     "verbose": true,
-    "setupFilesAfterEnv": ["<rootDir>src/setupTests.js"],
-    "testResultsProcessor": "jest-junit",
+    "setupFilesAfterEnv": [
+      "<rootDir>src/setupTests.js"
+    ],
+    "reporters": ["default", "jest-junit"],
     "snapshotSerializers": [
       "enzyme-to-json/serializer"
     ],
@@ -15,14 +17,10 @@
       "node_modules/enzyme/"
     ]
   },
-  "jest-junit": {
-    "suiteName": "Test Suite",
-    "output": "./reports/junit/js-test-results.xml"
-  },
   "main": "src/server.js",
   "scripts": {
     "build": "eslint --fix src && webpack -p",
-    "test": "jest --ci --testResultsProcessor='jest-junit'",
+    "test": "jest --ci",
     "server": "nodemon index.js",
     "start": "npm run build; npm run server"
   },
