@@ -33,6 +33,8 @@ jobs:
       - *peof_primary_nodejs_image
     steps:
       - checkout
+      - restore_cache:
+          key: << parameters.source_root >>-npm-cache-v1-{{ checksum "package-lock.json" }}
       - run:
           name: Static code analysis with Eslint
           command: |
@@ -55,14 +57,14 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: << parameters.source_root >>-npm-cache-v1-{{ checksum "package-lock.json" }}
+          key: << parameters.source_root >>-npm-cache-v1-{{ checksum "<< parameters.source_root >>/package-lock.json" }}
       - run:
           name: Install Dependencies
           command: |
             cd ~/project/<< parameters.source_root >>
             npm ci
       - save_cache:
-          key: << parameters.source_root >>-npm-cache-v1-{{ checksum "package-lock.json" }}
+          key: << parameters.source_root >>-npm-cache-v1-{{ checksum "<< parameters.source_root >>/package-lock.json" }}
           paths:
             - /home/circleci/.npm
       - run:
