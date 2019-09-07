@@ -65,6 +65,7 @@ jobs:
       - *peof_primary_image
     steps:
       - checkout
+      - setup_remote_docker
       - run:
           name: "build docker image from feature branch"
           command: |
