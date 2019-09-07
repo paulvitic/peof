@@ -67,15 +67,6 @@ jobs:
       - restore_cache:
           key: << parameters.source_root >>-npm-cache-v1-{{ checksum "<< parameters.source_root >>/package-lock.json" }}
       - run:
-          name: Install Dependencies
-          command: |
-            cd ~/project/<< parameters.source_root >>
-            npm ci
-      - save_cache:
-          key: << parameters.source_root >>-npm-cache-v1-{{ checksum "<< parameters.source_root >>/package-lock.json" }}
-          paths:
-            - /home/circleci/.npm
-      - run:
           name: Run Tests
           command: |
             cd ~/project/<< parameters.source_root >>
