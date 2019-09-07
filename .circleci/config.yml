@@ -43,7 +43,7 @@ jobs:
     docker:
       - *peof_primary_nodejs_image
     steps:
-      - checkout    -
+      - checkout
       - run:
           name: "JavaScript Test Suite"
           # yarn here makes sure we are using the local jest binary
@@ -54,6 +54,26 @@ jobs:
           path: reports/junit
       - store_artifacts:
           path: reports/junit
+
+  push_container_to_test_repo:
+    description: "push the container built from the development branch to test repository."
+    parameters:
+      source_root:
+        description: "Which sub folder is being built."
+        type: string
+    docker:
+      - *peof_primary_image
+    steps:
+      - checkout
+      - run:
+          name: "build docker image from feature branch"
+          command: |
+            TAG="$(date +'%Y%m%d')"-"$(git rev-parse --short HEAD)"
+            echo $TAG
+            cd ~/project/<< parameters.source_root >>
+            source <(aws ecr get-login --region eu-central-1 --no-include-email)
+            docker build -t 332197038802.dkr.ecr.eu-central-1.amazonaws.com/test-repository:${TAG} .
+            docker push 332197038802.dkr.ecr.eu-central-1.amazonaws.com/test-repository:${TAG}
 
   deploy_to_development:
     description: "Deploy to Heroku test environment"
@@ -108,7 +128,7 @@ jobs:
       - *attach_workspace
       - checkout
       - run:
-          name: Deploy newly merged master to Heroku staging
+          name: Deploy newly merged master to Heroku production
           # add git subtree push to production Heroku app
           command: |
             echo `cat /tmp/workspace/github_pr_source_root.txt`
@@ -171,8 +191,17 @@ workflows:
             branches:
               only:
                 - /organization-ui\/.*/
+      - push_container_to_test_repo:
+          context: peof
+          source_root: organization-ui
+          filters:
+            branches:
+              only:
+                - /organization-ui\/.*/
+          requires:
+            - code_analysis_nodejs
       - deploy_to_development:
-          context: peof # set on CircleCI at hold secrets such as $HEROKU_API_KEY
+          context: peof # set on CircleCI. Hold secrets such as $HEROKU_API_KEY
           source_root: organization-ui
           heroku_app: organization-ui-test
           filters:
