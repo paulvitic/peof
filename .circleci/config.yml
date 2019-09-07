@@ -8,7 +8,7 @@ aliases:
       aws_access_key_id: $AWS_ACCESS_KEY_ID
       aws_secret_access_key: $AWS_SECRET_ACCESS_KEY
   peof_primary_nodejs_image: &peof_primary_nodejs_image
-    image: 332197038802.dkr.ecr.eu-central-1.amazonaws.com/peof-circleci-nodejs:latest
+    image: 332197038802.dkr.ecr.eu-central-1.amazonaws.com/peof-circleci-nodejs:20190907183136
     aws_auth:
       aws_access_key_id: $AWS_ACCESS_KEY_ID
       aws_secret_access_key: $AWS_SECRET_ACCESS_KEY
