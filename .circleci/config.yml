@@ -34,12 +34,20 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: << parameters.source_root >>-npm-cache-v1-{{ checksum "package-lock.json" }}
+          key: << parameters.source_root >>-npm-cache-v1-{{ checksum "<< parameters.source_root >>/package-lock.json" }}
+      - run:
+          name: Install Dependencies
+          command: |
+            cd ~/project/<< parameters.source_root >>
+            npm ci
+      - save_cache:
+          key: << parameters.source_root >>-npm-cache-v1-{{ checksum "<< parameters.source_root >>/package-lock.json" }}
+          paths:
+            - /home/circleci/.npm
       - run:
           name: Static code analysis with Eslint
           command: |
             cd ~/project/<< parameters.source_root >>
-            npm install
             eslint ./src --format junit --output-file ~/project/<< parameters.source_root >>/reports/eslint.xml
       - store_test_results:
           path: ~/project/<< parameters.source_root >>/reports
@@ -85,9 +93,9 @@ jobs:
       #    environment:
       #      JEST_JUNIT_OUTPUT: "reports/junit/js-test-results.xml"
       - store_test_results:
-          path: reports/junit
+          path: ~/project/<< parameters.source_root >>/reports
       - store_artifacts:
-          path: reports/junit
+          path: ~/project/<< parameters.source_root >>/reports
 
 
   push_container_to_dev_repo:
