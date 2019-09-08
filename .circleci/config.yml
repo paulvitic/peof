@@ -93,6 +93,11 @@ jobs:
         type: string
     docker:
       - *peof_primary_nodejs_image
+      - image: circleci/mongo:4
+        environment:
+          ENV MONGO_INITDB_ROOT_USERNAME: root
+          ENV MONGO_INITDB_ROOT_PASSWORD: password
+          ENV MONGO_INITDB_DATABASE: admin
     steps:
       - checkout
       - restore_cache:
@@ -106,6 +111,13 @@ jobs:
           key: << parameters.source_root >>-npm-cache-v1-{{ checksum "<< parameters.source_root >>/package-lock.json" }}
           paths:
             - /home/circleci/.npm
+      - run:
+          name: Wait for MongoDB
+          command: wait-for-container MongoDB localhost 27017 20
+      - run:
+          name: Initialize MongoDB
+          command: |
+            mongo localhost:27017 < /home/circleci/mongo/mongo-init.js
       - run:
           name: Run Tests
           command: |
