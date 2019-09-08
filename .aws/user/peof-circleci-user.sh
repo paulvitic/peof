@@ -11,7 +11,7 @@ deploy(){
         --stack-name $STACK_NAME \
         --template $CLOUDFORMATION_TEMPLATE \
         --capabilities CAPABILITY_IAM \
-        --parameter-overrides PEOFContainerRepositoriesRootArn=arn:aws:ecr:eu-central-1:pvitic-aws:repository/peof-*
+        --parameter-overrides PEOFContainerRepositoriesRootArn=arn:aws:ecr:eu-central-1:332197038802:repository/peof-*
 }
 
 delete(){
