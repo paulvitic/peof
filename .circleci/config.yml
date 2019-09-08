@@ -3,7 +3,6 @@ version: 2.1
 aliases:
   peof_primary_image: &peof_primary_image
     image: 332197038802.dkr.ecr.eu-central-1.amazonaws.com/peof-circleci:latest
-    # set in CircleCI project environment variables
     aws_auth:
       aws_access_key_id: $AWS_ACCESS_KEY_ID
       aws_secret_access_key: $AWS_SECRET_ACCESS_KEY
@@ -17,6 +16,18 @@ aliases:
     aws_auth:
       aws_access_key_id: $AWS_ACCESS_KEY_ID
       aws_secret_access_key: $AWS_SECRET_ACCESS_KEY
+  peof_secondary_mongodb_image: &peof_secondary_mongodb_image
+    image: circleci/mongo:4
+    environment:
+      ENV MONGO_INITDB_ROOT_USERNAME: root
+      ENV MONGO_INITDB_ROOT_PASSWORD: password
+      ENV MONGO_INITDB_DATABASE: admin
+  peof_secondary_rabbitmq_image: &peof_secondary_rabbitmq_image
+    image: rabbitmq:3
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+      RABBITMQ_DEFAULT_VHOST: /
   workspace_root: &workspace_root /tmp/workspace
   attach_workspace: &attach_workspace
     attach_workspace:
@@ -93,11 +104,7 @@ jobs:
         type: string
     docker:
       - *peof_primary_nodejs_image
-      - image: circleci/mongo:4
-        environment:
-          ENV MONGO_INITDB_ROOT_USERNAME: root
-          ENV MONGO_INITDB_ROOT_PASSWORD: password
-          ENV MONGO_INITDB_DATABASE: admin
+      - *peof_secondary_mongodb_image
     steps:
       - checkout
       - restore_cache:
@@ -209,16 +216,8 @@ jobs:
   integration_test_go:
     docker:
       - *peof_primary_go_image
-      - image: circleci/mongo:4
-        environment:
-          ENV MONGO_INITDB_ROOT_USERNAME: root
-          ENV MONGO_INITDB_ROOT_PASSWORD: password
-          ENV MONGO_INITDB_DATABASE: admin
-      - image: rabbitmq:3
-        environment:
-          RABBITMQ_DEFAULT_USER: guest
-          RABBITMQ_DEFAULT_PASS: guest
-          RABBITMQ_DEFAULT_VHOST: /
+      - *peof_secondary_mongodb_image
+      - *peof_secondary_rabbitmq_image
     steps:
       - checkout
       - run:
