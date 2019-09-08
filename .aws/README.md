@@ -29,5 +29,8 @@ docker tag 1178850dc127 332197038802.dkr.ecr.eu-central-1.amazonaws.com/test-rep
 docker push 332197038802.dkr.ecr.eu-central-1.amazonaws.com/test-repository
 ```
 
-
-[Cloud formation templates](https://s3.amazonaws.com/cloudformation-templates-us-east-1)
+## References
+* [Cloud formation templates](https://s3.amazonaws.com/cloudformation-templates-us-east-1)
+* [ECS CloudFormation sample 1](https://github.com/aws-samples/ecs-refarch-cloudformation)
+* [ECS CloudFormation sample 2](https://github.com/nathanpeck/ecs-cloudformation)
+* [ECS CloudFormation sample 3](https://github.com/awslabs/aws-cloudformation-templates/tree/master/aws/services/ECS)
