@@ -79,21 +79,42 @@ jobs:
           name: Run Tests
           command: |
             cd ~/project/<< parameters.source_root >>
-            jest --ci --runInBand
-      #- run:
-      #    name: "JavaScript Test Suite"
-          # yarn here makes sure we are using the local jest binary
-      #    command: |
-      #      cd ~/project/<< parameters.source_root >>
-      #      npm install
-      #      npm run test
-      #    environment:
-      #      JEST_JUNIT_OUTPUT: "reports/junit/js-test-results.xml"
+            jest --ci --runInBand --testPathPattern=.*\/__test__\/.*.test.js
       - store_test_results:
           path: ~/project/<< parameters.source_root >>/reports
       - store_artifacts:
           path: ~/project/<< parameters.source_root >>/reports
 
+  integrataion_test_nodejs:
+    description: "Unit test on Nodejs app"
+    parameters:
+      source_root:
+        description: "Which sub folder is being built."
+        type: string
+    docker:
+      - *peof_primary_nodejs_image
+    steps:
+      - checkout
+      - restore_cache:
+          key: << parameters.source_root >>-npm-cache-v1-{{ checksum "<< parameters.source_root >>/package-lock.json" }}
+      - run:
+          name: Install Dependencies
+          command: |
+            cd ~/project/<< parameters.source_root >>
+            npm ci
+      - save_cache:
+          key: << parameters.source_root >>-npm-cache-v1-{{ checksum "<< parameters.source_root >>/package-lock.json" }}
+          paths:
+            - /home/circleci/.npm
+      - run:
+          name: Run Tests
+          command: |
+            cd ~/project/<< parameters.source_root >>
+            jest --ci --runInBand --testEnvironment=node --testPathPattern=.*\/__integration__\/.*.test.js
+      - store_test_results:
+          path: ~/project/<< parameters.source_root >>/reports
+      - store_artifacts:
+          path: ~/project/<< parameters.source_root >>/reports
 
   push_container_to_dev_repo:
     description: "push the container built from the development branch to test repository."
@@ -138,8 +159,6 @@ jobs:
           command: |
             git subtree push --prefix << parameters.source_root >> \
               https://heroku:$HEROKU_API_KEY@git.heroku.com/<< parameters.heroku_app >>.git master
-
-  #integration_test_nodejs:
 
   #code_analysis_go:
 
@@ -238,7 +257,7 @@ workflows:
                 - /organization-ui\/.*/
           requires:
             - code_analysis_nodejs
-      - push_container_to_dev_repo:
+      - integrataion_test_nodejs:
           source_root: organization-ui
           filters:
             branches:
@@ -246,6 +265,14 @@ workflows:
                 - /organization-ui\/.*/
           requires:
             - unit_test_nodejs
+      - push_container_to_dev_repo:
+          source_root: organization-ui
+          filters:
+            branches:
+              only:
+                - /organization-ui\/.*/
+          requires:
+            - integrataion_test_nodejs
 #      - deploy_to_development:
 #          context: peof # set on CircleCI. Hold secrets such as $HEROKU_API_KEY
 #          source_root: organization-ui

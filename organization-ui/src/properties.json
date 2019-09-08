@@ -22,7 +22,7 @@
     "db": {
       "host": "localhost",
       "port": 27017,
-      "name": "test",
+      "name": "orgView",
       "user": "orgView",
       "password": "password"
     },
