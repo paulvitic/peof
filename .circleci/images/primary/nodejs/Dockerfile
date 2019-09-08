@@ -1,4 +1,4 @@
-FROM 332197038802.dkr.ecr.eu-central-1.amazonaws.com/peof-circleci:latest
+FROM pvitic-aws.dkr.ecr.eu-central-1.amazonaws.com/peof-circleci:latest
 
 USER root
 

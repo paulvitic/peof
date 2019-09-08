@@ -25,8 +25,8 @@ source <(aws --profile repo-user ecr get-login --region eu-central-1 --no-includ
 
 then tag and push the image
 ```
-docker tag 1178850dc127 332197038802.dkr.ecr.eu-central-1.amazonaws.com/test-repository
-docker push 332197038802.dkr.ecr.eu-central-1.amazonaws.com/test-repository
+docker tag 1178850dc127 pvitic-aws.dkr.ecr.eu-central-1.amazonaws.com/test-repository
+docker push pvitic-aws.dkr.ecr.eu-central-1.amazonaws.com/test-repository
 ```
 
 

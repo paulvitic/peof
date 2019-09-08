@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-AWS_REPOSITORY_URL=332197038802.dkr.ecr.eu-central-1.amazonaws.com
+AWS_REPOSITORY_URL=pvitic-aws.dkr.ecr.eu-central-1.amazonaws.com
 
 # Read optional the stack 's' param
 while getopts s: option

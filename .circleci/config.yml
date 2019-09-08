@@ -2,18 +2,18 @@ version: 2.1
 
 aliases:
   peof_primary_image: &peof_primary_image
-    image: 332197038802.dkr.ecr.eu-central-1.amazonaws.com/peof-circleci:latest
+    image: pvitic-aws.dkr.ecr.eu-central-1.amazonaws.com/peof-circleci:latest
     # set in CircleCI project environment variables
     aws_auth:
       aws_access_key_id: $AWS_ACCESS_KEY_ID
       aws_secret_access_key: $AWS_SECRET_ACCESS_KEY
   peof_primary_nodejs_image: &peof_primary_nodejs_image
-    image: 332197038802.dkr.ecr.eu-central-1.amazonaws.com/peof-circleci-nodejs:latest
+    image: pvitic-aws.dkr.ecr.eu-central-1.amazonaws.com/peof-circleci-nodejs:latest
     aws_auth:
       aws_access_key_id: $AWS_ACCESS_KEY_ID
       aws_secret_access_key: $AWS_SECRET_ACCESS_KEY
   peof_primary_go_image: &peof_primary_go_image
-    image: 332197038802.dkr.ecr.eu-central-1.amazonaws.com/peof-circleci-go:latest
+    image: pvitic-aws.dkr.ecr.eu-central-1.amazonaws.com/peof-circleci-go:latest
     aws_auth:
       aws_access_key_id: $AWS_ACCESS_KEY_ID
       aws_secret_access_key: $AWS_SECRET_ACCESS_KEY
@@ -143,7 +143,7 @@ jobs:
           name: "build docker image from feature branch"
           command: |
             TAG="$(git rev-parse --short HEAD)"
-            IMAGE=332197038802.dkr.ecr.eu-central-1.amazonaws.com/peof-<< parameters.source_root >>-dev
+            IMAGE=pvitic-aws.dkr.ecr.eu-central-1.amazonaws.com/peof-<< parameters.source_root >>-dev
             cd ~/project/<< parameters.source_root >>
             source <(aws ecr get-login --region eu-central-1 --no-include-email)
             docker build -t ${IMAGE}:${TAG} .
