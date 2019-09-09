@@ -11,6 +11,10 @@ app.use(morgan('dev'));
 
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
+app.get('/framework/', (req, res) => {
+  const html = renderPage();
+  res.render('layout', { html });
+});
 app.get('/', (req, res) => {
   const html = renderPage();
   res.render('layout', { html });

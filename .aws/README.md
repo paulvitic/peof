@@ -36,3 +36,5 @@ docker push 332197038802.dkr.ecr.eu-central-1.amazonaws.com/test-repository
 * [ECS CloudFormation sample 3](https://github.com/awslabs/aws-cloudformation-templates/tree/master/aws/services/ECS)
 * [A complete guide to deploying your app to ECS](https://codeburst.io/a-complete-guide-to-deploying-your-web-app-to-amazon-web-service-2854ff6bc399)
 * [A set of very useful how-tos for ECS](https://github.com/nathanpeck/awesome-ecs)
+* [RabbitMQ ECS Clustering](https://github.com/malawson/rabbitmq-ecs-autoclustering)
+* [mongo ecs](https://node.university/blog/10067/aws-ecs-containers)
