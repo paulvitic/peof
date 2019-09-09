@@ -6,7 +6,7 @@
   "scripts": {
     "build": "webpack -p",
     "server": "babel-node --presets env ./src/server.js",
-    "start": "npm run build; npm run server",
+    "start": "npm run server",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
@@ -14,13 +14,13 @@
   "dependencies": {
     "ejs": "^2.6.1",
     "express": "^4.16.4",
-    "morgan": "^1.9.1"
+    "morgan": "^1.9.1",
+    "babel-cli": "^6.26.0",
+    "babel-preset-env": "^1.7.0"
   },
   "devDependencies": {
-    "babel-cli": "^6.26.0",
     "babel-core": "^6.26.3",
     "babel-loader": "^7.1.5",
-    "babel-preset-env": "^1.7.0",
     "nodemon": "^1.18.9",
     "webpack": "^3.12.0",
     "eslint": "^6.1.0",
