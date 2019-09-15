@@ -38,3 +38,4 @@ docker push 332197038802.dkr.ecr.eu-central-1.amazonaws.com/test-repository
 * [A set of very useful how-tos for ECS](https://github.com/nathanpeck/awesome-ecs)
 * [RabbitMQ ECS Clustering](https://github.com/malawson/rabbitmq-ecs-autoclustering)
 * [mongo ecs](https://node.university/blog/10067/aws-ecs-containers)
+* [VPC CloudFormation tutorial](https://www.infoq.com/articles/aws-vpc-cloudformation/)
