@@ -39,3 +39,5 @@ docker push 332197038802.dkr.ecr.eu-central-1.amazonaws.com/test-repository
 * [RabbitMQ ECS Clustering](https://github.com/malawson/rabbitmq-ecs-autoclustering)
 * [mongo ecs](https://node.university/blog/10067/aws-ecs-containers)
 * [VPC CloudFormation tutorial](https://www.infoq.com/articles/aws-vpc-cloudformation/)
+* [Continuous Deployment to ECS with Code Pipeline](https://github.com/awslabs/ecs-refarch-continuous-deployment)
+* [Another very detailed tutorial - AWSVPC](https://www.apriorit.com/dev-blog/610-virtualization-steps-to-deploy-website-using-aws)
