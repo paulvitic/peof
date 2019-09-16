@@ -5,10 +5,6 @@ IMAGE="${AWS_REPOSITORY_URL}/peof-mongodb-dev"
 DOCKER_FILE_LOCATION=mongoDb/Dockerfile
 cd mongoDb
 
-#IMAGE="${AWS_REPOSITORY_URL}/peof-mongo-express-dev"
-#DOCKER_FILE_LOCATION=mongo-express/Dockerfile
-#cd mongo-express
-
 echo "logging into AWS Container repository"
 $(aws ecr get-login --region eu-central-1 --no-include-email)
 
