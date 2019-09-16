@@ -41,3 +41,4 @@ docker push 332197038802.dkr.ecr.eu-central-1.amazonaws.com/test-repository
 * [VPC CloudFormation tutorial](https://www.infoq.com/articles/aws-vpc-cloudformation/)
 * [Continuous Deployment to ECS with Code Pipeline](https://github.com/awslabs/ecs-refarch-continuous-deployment)
 * [Another very detailed tutorial - AWSVPC](https://www.apriorit.com/dev-blog/610-virtualization-steps-to-deploy-website-using-aws)
+* [Task Networking in AWS Fargate](https://aws.amazon.com/blogs/compute/task-networking-in-aws-fargate/)
