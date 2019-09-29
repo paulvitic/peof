@@ -24,7 +24,7 @@ fi
 TAG="$(date +'%Y%m%d%H%M%S')"
 
 echo "logging into AWS Container repository"
-source <(aws ecr get-login --region eu-central-1 --no-include-email)
+$(aws ecr get-login --region eu-central-1 --no-include-email)
 
 echo "building image ${IMAGE}:${TAG}"
 #docker build --no-cache -t ${IMAGE}:${TAG} -t ${IMAGE}:latest -f ${DOCKER_FILE_LOCATION} .

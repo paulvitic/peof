@@ -20,7 +20,7 @@ using a temporary docker user and password. You can directly execute the output 
 aws ecr get-login by sourcing the output:
  
 ```
-source <(aws --profile repo-user ecr get-login --region eu-central-1 --no-include-email)
+$(aws --profile repo-user ecr get-login --region eu-central-1 --no-include-email)
 ```
 
 then tag and push the image

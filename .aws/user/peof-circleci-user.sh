@@ -4,7 +4,7 @@ DIR=$(pwd)
 CLOUDFORMATION_TEMPLATE=$DIR/peof-circleci-user.yml
 STACK_NAME=peof-circleci-user
 TEMPLATE_URL=https://peof-bucket.s3.eu-central-1.amazonaws.com/aws/user/peof-circleci-user.yml
-PEOF_CONTAINER_REPO_ARN=arn:aws:ecr:eu-central-1:332197038802:repository/peof-*
+PEOF_CONTAINER_REPO_ARN="arn:aws:ecr:eu-central-1:332197038802:repository/peof-*"
 
 deploy(){
 	aws --profile pvitic-administrator \
