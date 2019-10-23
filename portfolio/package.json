@@ -1,0 +1,19 @@
+{
+  "name": "peof-portfolio",
+  "version": "1.0.0",
+  "description": "portfolio management backend",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/paulvitic/peof.git"
+  },
+  "author": "Paul Vitic",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/paulvitic/peof/issues"
+  },
+  "homepage": "https://github.com/paulvitic/peof#readme"
+}
