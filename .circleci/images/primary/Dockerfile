@@ -90,7 +90,10 @@ RUN echo "=== finished Docker installation ==="
 
 
 RUN echo "=== starting AWS CLI installation ==="
-RUN apt-get update && apt-get install -y awscli
+# we need to install aws with pip because otherwise some aws commands are not available with apt-get
+RUN apt-get install -y python3-pip
+RUN pip3 install awscli
+#RUN apt-get update && apt-get install -y awscli
 RUN echo "=== finished AWS CLI installation ==="
 
 
@@ -108,11 +111,8 @@ RUN echo "=== starting MongoDB client installation ==="
 RUN sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 9DA31620334BD75D9DCB49F368818C72E52529D4
 # Create a list file for MongoDB
 RUN echo "deb http://repo.mongodb.org/apt/debian jessie/mongodb-org/4.0 main" | sudo tee /etc/apt/sources.list.d/mongodb-org-4.0.list
-# Reload local package database
-RUN apt-get update
-# Install the Mongo client packages
-RUN apt-get -y install mongodb-org-shell
-RUN apt-get -y install mongodb-org-tools
+# Reload local package database & Install the Mongo client packages
+RUN apt-get update && apt-get install -y mongodb-org-shell mongodb-org-tools
 # add an db init script
 RUN mkdir /home/circleci/mongo
 COPY mongo-init.js /home/circleci/mongo/mongo-init.js

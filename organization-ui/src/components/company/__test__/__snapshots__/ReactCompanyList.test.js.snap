@@ -1,0 +1,11 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`App renders without crashing given the required props 1`] = `
+<styled.button
+  alert={true}
+  confirm={true}
+  disabled={false}
+  onClick={[Function]}
+  primary={true}
+/>
+`;

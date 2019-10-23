@@ -1,12 +1,33 @@
 version: 2.1
 
-anchors:
+aliases:
   peof_primary_image: &peof_primary_image
-    image: paulvitic/peof-circleci:20190828123359
+    image: 332197038802.dkr.ecr.eu-central-1.amazonaws.com/peof-circleci:latest
+    aws_auth:
+      aws_access_key_id: $AWS_ACCESS_KEY_ID
+      aws_secret_access_key: $AWS_SECRET_ACCESS_KEY
   peof_primary_nodejs_image: &peof_primary_nodejs_image
-    image: paulvitic/peof-circleci-nodejs:20190828123637
+    image: 332197038802.dkr.ecr.eu-central-1.amazonaws.com/peof-circleci-nodejs:latest
+    aws_auth:
+      aws_access_key_id: $AWS_ACCESS_KEY_ID
+      aws_secret_access_key: $AWS_SECRET_ACCESS_KEY
   peof_primary_go_image: &peof_primary_go_image
-    image: paulvitic/peof-circleci-go:20190828123805
+    image: 332197038802.dkr.ecr.eu-central-1.amazonaws.com/peof-circleci-go:latest
+    aws_auth:
+      aws_access_key_id: $AWS_ACCESS_KEY_ID
+      aws_secret_access_key: $AWS_SECRET_ACCESS_KEY
+  peof_secondary_mongodb_image: &peof_secondary_mongodb_image
+    image: circleci/mongo:4
+    environment:
+      ENV MONGO_INITDB_ROOT_USERNAME: root
+      ENV MONGO_INITDB_ROOT_PASSWORD: password
+      ENV MONGO_INITDB_DATABASE: admin
+  peof_secondary_rabbitmq_image: &peof_secondary_rabbitmq_image
+    image: rabbitmq:3
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+      RABBITMQ_DEFAULT_VHOST: /
   workspace_root: &workspace_root /tmp/workspace
   attach_workspace: &attach_workspace
     attach_workspace:
@@ -23,16 +44,118 @@ jobs:
       - *peof_primary_nodejs_image
     steps:
       - checkout
+      - restore_cache:
+          key: << parameters.source_root >>-npm-cache-v1-{{ checksum "<< parameters.source_root >>/package-lock.json" }}
+      - run:
+          name: Install Dependencies
+          command: |
+            cd ~/project/<< parameters.source_root >>
+            npm ci
+      - save_cache:
+          key: << parameters.source_root >>-npm-cache-v1-{{ checksum "<< parameters.source_root >>/package-lock.json" }}
+          paths:
+            - /home/circleci/.npm
       - run:
           name: Static code analysis with Eslint
           command: |
             cd ~/project/<< parameters.source_root >>
-            npm install
             eslint ./src --format junit --output-file ~/project/<< parameters.source_root >>/reports/eslint.xml
       - store_test_results:
           path: ~/project/<< parameters.source_root >>/reports
       - store_artifacts:
           path: ~/project/<< parameters.source_root >>/reports
+
+  unit_test_nodejs:
+    description: "Unit test on Nodejs app"
+    parameters:
+      source_root:
+        description: "Which sub folder is being built."
+        type: string
+    docker:
+      - *peof_primary_nodejs_image
+    steps:
+      - checkout
+      - restore_cache:
+          key: << parameters.source_root >>-npm-cache-v1-{{ checksum "<< parameters.source_root >>/package-lock.json" }}
+      - run:
+          name: Install Dependencies
+          command: |
+            cd ~/project/<< parameters.source_root >>
+            npm ci
+      - save_cache:
+          key: << parameters.source_root >>-npm-cache-v1-{{ checksum "<< parameters.source_root >>/package-lock.json" }}
+          paths:
+            - /home/circleci/.npm
+      - run:
+          name: Run Tests
+          command: |
+            cd ~/project/<< parameters.source_root >>
+            jest --ci --runInBand --testPathPattern=.*\/__test__\/.*.test.js
+      - store_test_results:
+          path: ~/project/<< parameters.source_root >>/reports
+      - store_artifacts:
+          path: ~/project/<< parameters.source_root >>/reports
+
+  integrataion_test_nodejs:
+    description: "Unit test on Nodejs app"
+    parameters:
+      source_root:
+        description: "Which sub folder is being built."
+        type: string
+    docker:
+      - *peof_primary_nodejs_image
+      - *peof_secondary_mongodb_image
+    steps:
+      - checkout
+      - restore_cache:
+          key: << parameters.source_root >>-npm-cache-v1-{{ checksum "<< parameters.source_root >>/package-lock.json" }}
+      - run:
+          name: Install Dependencies
+          command: |
+            cd ~/project/<< parameters.source_root >>
+            npm ci
+      - save_cache:
+          key: << parameters.source_root >>-npm-cache-v1-{{ checksum "<< parameters.source_root >>/package-lock.json" }}
+          paths:
+            - /home/circleci/.npm
+      - run:
+          name: Wait for MongoDB
+          command: wait-for-container MongoDB localhost 27017 20
+      - run:
+          name: Initialize MongoDB
+          command: |
+            mongo localhost:27017 < /home/circleci/mongo/mongo-init.js
+      - run:
+          name: Run Tests
+          command: |
+            cd ~/project/<< parameters.source_root >>
+            jest --ci --runInBand --testEnvironment=node --testPathPattern=.*\/__integration__\/.*.test.js
+      - store_test_results:
+          path: ~/project/<< parameters.source_root >>/reports
+      - store_artifacts:
+          path: ~/project/<< parameters.source_root >>/reports
+
+  push_container_to_dev_repo:
+    description: "push the container built from the development branch to test repository."
+    parameters:
+      source_root:
+        description: "Which sub folder is being built."
+        type: string
+    docker:
+      - *peof_primary_image
+    steps:
+      - checkout
+      - setup_remote_docker:
+          docker_layer_caching: true
+      - run:
+          name: "build docker image from feature branch"
+          command: |
+            TAG="$(git rev-parse --short HEAD)"
+            IMAGE=332197038802.dkr.ecr.eu-central-1.amazonaws.com/peof-<< parameters.source_root >>-dev
+            cd ~/project/<< parameters.source_root >>
+            $(aws ecr get-login --region eu-central-1 --no-include-email)
+            docker build -t ${IMAGE}:${TAG} .
+            docker push ${IMAGE}:${TAG}
 
   deploy_to_development:
     description: "Deploy to Heroku test environment"
@@ -56,10 +179,6 @@ jobs:
           command: |
             git subtree push --prefix << parameters.source_root >> \
               https://heroku:$HEROKU_API_KEY@git.heroku.com/<< parameters.heroku_app >>.git master
-
-  #unit_test_nodejs:
-
-  #integration_test_nodejs:
 
   #code_analysis_go:
 
@@ -89,7 +208,7 @@ jobs:
       - *attach_workspace
       - checkout
       - run:
-          name: Deploy newly merged master to Heroku staging
+          name: Deploy newly merged master to Heroku production
           # add git subtree push to production Heroku app
           command: |
             echo `cat /tmp/workspace/github_pr_source_root.txt`
@@ -97,16 +216,8 @@ jobs:
   integration_test_go:
     docker:
       - *peof_primary_go_image
-      - image: circleci/mongo:4
-        environment:
-          ENV MONGO_INITDB_ROOT_USERNAME: root
-          ENV MONGO_INITDB_ROOT_PASSWORD: password
-          ENV MONGO_INITDB_DATABASE: admin
-      - image: rabbitmq:3
-        environment:
-          RABBITMQ_DEFAULT_USER: guest
-          RABBITMQ_DEFAULT_PASS: guest
-          RABBITMQ_DEFAULT_VHOST: /
+      - *peof_secondary_mongodb_image
+      - *peof_secondary_rabbitmq_image
     steps:
       - checkout
       - run:
@@ -136,10 +247,8 @@ workflows:
   version: 2
   build_organization:
     jobs:
-      - deploy_to_development:
-          context: peof
+      - push_container_to_dev_repo:
           source_root: organization
-          heroku_app: organization-test
           filters:
             branches:
               only:
@@ -152,16 +261,40 @@ workflows:
             branches:
               only:
                 - /organization-ui\/.*/
-      - deploy_to_development:
-          context: peof # set on CircleCI at hold secrets such as $HEROKU_API_KEY
+      - unit_test_nodejs:
           source_root: organization-ui
-          heroku_app: organization-ui-test
           filters:
             branches:
               only:
                 - /organization-ui\/.*/
           requires:
             - code_analysis_nodejs
+      - integrataion_test_nodejs:
+          source_root: organization-ui
+          filters:
+            branches:
+              only:
+                - /organization-ui\/.*/
+          requires:
+            - unit_test_nodejs
+      - push_container_to_dev_repo:
+          source_root: organization-ui
+          filters:
+            branches:
+              only:
+                - /organization-ui\/.*/
+          requires:
+            - integrataion_test_nodejs
+#      - deploy_to_development:
+#          context: peof # set on CircleCI. Hold secrets such as $HEROKU_API_KEY
+#          source_root: organization-ui
+#          heroku_app: organization-ui-test
+#          filters:
+#            branches:
+#              only:
+#                - /organization-ui\/.*/
+#          requires:
+#            - code_analysis_nodejs
   build_framework_ui:
     jobs:
       - code_analysis_nodejs:
@@ -170,10 +303,8 @@ workflows:
             branches:
               only:
                 - /framework-ui\/.*/
-      - deploy_to_development:
-          context: peof # set on CircleCI at hold secrets such as $HEROKU_API_KEY
+      - push_container_to_dev_repo:
           source_root: framework-ui
-          heroku_app: framework-ui-test
           filters:
             branches:
               only:

@@ -27,6 +27,6 @@ export const CreateCompany = (event, ack) => {
         .save()
         .then(console.log('[info] company with name %s saved with id %s', event.companyName, event.aggregateId));
     }
-    ack(true);
   });
+  ack(true);
 };
