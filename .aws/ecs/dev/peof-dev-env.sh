@@ -8,21 +8,20 @@ BUCKET_URL=${S3_URL}${TEMPLATE}
 TEMPLATE_URL=https://peof-bucket.s3.eu-central-1.amazonaws.com/aws/ecs/${TEMPLATE}
 STACK_NAME=peof-dev-env
 
-
 deploy(){
 	aws --profile pvitic-administrator \
 	    --region eu-central-1 \
 	    --debug cloudformation deploy \
-        --stack-name $STACK_NAME \
-        --template $TEMPLATE_PATH \
-        --capabilities CAPABILITY_IAM
+      --stack-name $STACK_NAME \
+      --template $TEMPLATE_PATH \
+      --capabilities CAPABILITY_IAM
 }
 
 delete(){
 	aws --profile pvitic-administrator \
 	    --region eu-central-1 \
 	    --debug cloudformation delete-stack \
-        --stack-name $STACK_NAME
+      --stack-name $STACK_NAME
 }
 
 update(){
@@ -36,9 +35,9 @@ update(){
     aws --profile pvitic-administrator \
 	    --region eu-central-1 \
 	    --debug cloudformation update-stack \
-        --stack-name $STACK_NAME \
-        --template-url $TEMPLATE_URL \
-        --capabilities CAPABILITY_NAMED_IAM
+      --stack-name $STACK_NAME \
+      --template-url $TEMPLATE_URL \
+      --capabilities CAPABILITY_NAMED_IAM
 }
 
 OPTION=$1
