@@ -1,8 +1,53 @@
-Currently at
+# Setup Typescript
 
-tsconfig.json
+```$xslt
+# Create a new folder
+mkdir chapter-2
+cd chapter-2
 
-https://learning.oreilly.com/library/view/programming-typescript/9781492037644/ch02.html#typeScript_overview
+# Initialize a new NPM project (follow the prompts)
+npm init
+
+# Install TSC, TSLint, and type declarations for NodeJS
+npm install --save-dev typescript tslint @types/node
+```
+Create a new file called tsconfig.json in your root folder 
+```shell script
+touch tsconfig.json
+```
+then pop it open in your code editor and give it the following contents:
+```json
+{
+  "compilerOptions": {
+    "lib": ["es2015"],
+    "module": "commonjs",
+    "outDir": "dist",
+    "sourceMap": true,
+    "strict": true,
+    "target": "es2015"
+  },
+  "include": [
+    "src"
+  ]
+}
+```
+
+The following command will generate a tslint.json file with a default TSLint configuration:
+```$xslt
+./node_modules/.bin/tslint --init
+```
+
+Then, compile and run your TypeScript code:
+```$xslt
+# Compile your TypeScript with TSC
+./node_modules/.bin/tsc
+
+# Run your code with NodeJS
+node ./dist/index.js
+```
+
+
+### Currently at
 
 Module Mode Versus Script Mode
 
