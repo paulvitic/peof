@@ -16,7 +16,7 @@
     "amqplib": "^0.5.3",
     "cookie-parser": "~1.4.4",
     "express": "^4.16.4",
-    "mongoose": "^5.5.14",
+    "mongoose": "^5.7.5",
     "morgan": "^1.9.1",
     "react": "^16.8.3",
     "react-dom": "^16.8.3",
