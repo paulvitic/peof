@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"github.com/gofrs/uuid"
 	"github.com/ory/dockertest"
-	"github.com/paulvitic/peof/organization/config"
 	"github.com/paulvitic/peof/organization/domain"
+	"github.com/paulvitic/peof/organization/infrastructure"
 	"github.com/streadway/amqp"
 	"io"
 	"log"
@@ -26,7 +26,7 @@ var pool *dockertest.Pool
 
 // test fixtures
 var updatedCompanyId string
-var cnf *config.Configuration
+var cnf *infrastructure.Configuration
 
 var incoming = make(chan domain.Event)
 var publisher *AmqpEventPublisher
@@ -198,7 +198,7 @@ func configureTest() {
 	}
 
 	var errs []error
-	cnf, errs = config.NewConfig(profile)
+	cnf, errs = infrastructure.NewConfig(profile)
 	if errs != nil {
 		log.Fatalf("Error getting test configuration: %v", err)
 	}

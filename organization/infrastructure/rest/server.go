@@ -1,7 +1,7 @@
 package rest
 
 import (
-	"github.com/paulvitic/peof/organization/config"
+	"github.com/paulvitic/peof/organization/infrastructure"
 	"log"
 	"net/http"
 	"os"
@@ -12,11 +12,11 @@ import (
 )
 
 type Server struct {
-	configuration  *config.Configuration
+	configuration  *infrastructure.Configuration
 	companyHandler *CompanyHandler
 }
 
-func NewServer(orgUnitHandler *CompanyHandler, config *config.Configuration) *Server {
+func NewServer(orgUnitHandler *CompanyHandler, config *infrastructure.Configuration) *Server {
 	return &Server{
 		configuration:  config,
 		companyHandler: orgUnitHandler,

@@ -47,8 +47,7 @@ node ./dist/index.js
 ```
 
 
-### Currently at
+### References
 
-Module Mode Versus Script Mode
+* [Strongly typed Event Emmiters with conditional types: For Event and Command Bus?](https://medium.com/@bterlson/strongly-typed-event-emitters-2c2345801de8)
 
-https://learning.oreilly.com/library/view/programming-typescript/9781492037644/ch10.html#modules

@@ -2,8 +2,8 @@ package eventStore
 
 import (
 	"context"
-	"github.com/paulvitic/peof/organization/config"
 	"github.com/paulvitic/peof/organization/domain"
+	"github.com/paulvitic/peof/organization/infrastructure"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -12,7 +12,7 @@ import (
 	"time"
 )
 
-func NewMongoEventStore(config *config.Configuration) (eventStore *MongoEventStore) {
+func NewMongoEventStore(config *infrastructure.Configuration) (eventStore *MongoEventStore) {
 	uri := config.MongoDb.Uri
 	clientOptions := options.Client().ApplyURI(uri)
 

@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"github.com/gofrs/uuid"
 	"github.com/ory/dockertest"
-	"github.com/paulvitic/peof/organization/config"
 	"github.com/paulvitic/peof/organization/domain"
+	"github.com/paulvitic/peof/organization/infrastructure"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"log"
@@ -58,7 +58,7 @@ func TestMain(m *testing.M) {
 
 	log.Printf("[info] starting in %s profile", profile)
 
-	cnf, errs := config.NewConfig(profile)
+	cnf, errs := infrastructure.NewConfig(profile)
 	if errs != nil {
 		log.Fatalf("Error while changing directory: %v", err)
 	}
