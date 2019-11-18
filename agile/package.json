@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "main": "src/main.ts",
   "scripts": {
+    "validate": "node ./node_modules/dependency-cruiser/bin/dependency-cruise --validate .arch-fitness.json src --ts-pre-compilation-deps",
     "build": "tsc",
     "start": "node dist/main.js",
     "test": "jest",
@@ -22,7 +23,7 @@
   "devDependencies": {
     "@types/express": "^4.17.2",
     "@types/node": "^12.11.7",
-    "dependency-cruiser": "^5.2.2",
+    "dependency-cruiser": "^5.3.1",
     "tslint": "^5.20.0",
     "typescript": "^3.6.4",
     "@types/node-cron": "^2.0.2"

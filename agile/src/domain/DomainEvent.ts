@@ -1,5 +1,5 @@
-export interface DomainEvent{
-    type(): string;
+export default interface DomainEvent {
+    eventType(): string;
     aggregate(): string;
     aggregateId(): string;
     generatedOn(): Date;
