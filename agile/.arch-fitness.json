@@ -1,13 +1,13 @@
 {
     "forbidden": [{
         "name": "not-to-domain",
-        "comment": "don't allow dependencies from outside the domain folder to domain",
+        "comment": "don't allow domain to depend on non-domain packages",
         "severity": "error",
         "from": {
-            "path": "application"
+            "path": "domain"
         },
         "to": {
-            "path": "domain"
+            "pathNot": "domain"
         }
     }]
 }
