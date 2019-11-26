@@ -1,23 +1,11 @@
-import config from './startup/config';
-import loaders from './startup/loaders'
-import express from 'express';
+import {Startup} from './startup'
 
-async function startServer() {
-    const expressApp = express();
-    await loaders(expressApp);
-
-    expressApp.listen(config.port, err => {
-        if (err) {
-            global.log.error(err);
-            process.exit(1);
-            return;
-        }
-        global.log.info(`
-      ################################################
-      🛡️  Server listening on port: ${config.port} 🛡️ 
-      ################################################
-    `);
+Startup.start()
+    .then((appConfig) => {
+        global.log.info(`Application started with config:\n${JSON.stringify(appConfig, null, 2)}`);
+    })
+    .catch((error) => {
+        global.log.error(`Error occurred while starting the app!\n${error}`);
+        // As the application failed to start, terminate the the process
+        process.exit();
     });
-}
-
-startServer();

@@ -14,7 +14,7 @@ export default class JobScheduler {
 
     private executeJob() {
         return () => {
-            global.log.info("running a task");
+            global.log.info("Running a task");
             this.service.collectData();
         }
     }

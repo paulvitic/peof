@@ -1,11 +1,14 @@
-import DataCollectionProcessor from "./DataCollectionProcessor";
 import DomainEvent from "./DomainEvent";
 import DataCollectionStarted from "./DataCollectionStarted";
+import {DataCollectionProcessor} from "./DataCollectionProcessor";
+import EventBus from "./EventBus";
+import EventListener from "./EventListener";
 
-export default class DataCollectionExecutive implements DataCollectionProcessor<DomainEvent> {
+export default class DataCollectionExecutive extends DataCollectionProcessor {
 
-    public start(): DomainEvent | undefined {
-        return new DataCollectionStarted("DataCollection", "111111");
+    public start() {
+        const event = new DataCollectionStarted("DataCollection", "111111");
+        this.publish(event).then(() => global.log.info("Data collection started"));
         /**
          curl --request GET \
          --url 'https://some.atlassian.net/rest/api/3/search?jql=status%20not%20in%20(Closed%2C%20Done)%20and%20project%3DContact&maxResults=1&fields=statuscategorychangedate,issuetype,project' \
@@ -14,7 +17,7 @@ export default class DataCollectionExecutive implements DataCollectionProcessor<
          **/
     }
 
-    public process(event: DomainEvent): undefined {
-        return undefined;
+    public on(event: DomainEvent): void {
+        global.log.info("Data collection finished");
     }
 }

@@ -1,13 +1,14 @@
-import DomainEventPublisher from "./DomainEventPublisher";
+import EventBus from "../domain/EventBus";
+import EventPublisher from "../domain/EventPublisher";
 import DomainEvent from "../domain/DomainEvent";
 
-export default abstract class ApplicationService {
+export default abstract class ApplicationService implements EventPublisher{
 
-    constructor(private readonly eventPublisher: DomainEventPublisher) {}
+    protected constructor(private readonly eventBus: EventBus) {}
 
-    protected publish(event: DomainEvent | undefined){
+    async publish(event: DomainEvent){
         if (event){
-            this.eventPublisher.publish(event);
+            this.eventBus.publish(event);
         }
     }
 }

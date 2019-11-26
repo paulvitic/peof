@@ -1,16 +1,16 @@
 import ApplicationService from "./ApplicationService";
-import DomainEventPublisher from "./DomainEventPublisher";
+import EventBus from "../domain/EventBus";
 import DataCollectionExecutive from "../domain/DataCollectionExecutive";
 
 export default class DataCollectionService extends ApplicationService {
 
-    constructor (private processor: DataCollectionExecutive,
-                 eventPublisher: DomainEventPublisher){
-        super(eventPublisher);
+    constructor (private readonly processor: DataCollectionExecutive,
+                 eventBus: EventBus){
+        super(eventBus);
     }
 
-    collectData() {
-       global.log.info("Service collecting data");
-       this.publish(this.processor.start());
+    collectData(): void {
+       global.log.info("Service starting data collection.");
+       this.processor.start();
     }
 }

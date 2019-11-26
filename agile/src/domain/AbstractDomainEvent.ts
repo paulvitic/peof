@@ -1,6 +1,6 @@
 import DomainEvent from "./DomainEvent";
 
-export default abstract class AbstractDomainEvent implements DomainEvent{
+export default abstract class AbstractDomainEvent implements DomainEvent {
 
     private readonly _generatedOn: Date;
     private readonly _eventType: string;

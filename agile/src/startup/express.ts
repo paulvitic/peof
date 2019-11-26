@@ -1,14 +1,16 @@
 import express, { Request, Response, NextFunction } from 'express';
 import bodyParser from 'body-parser';
-import routes from '../../infrastructure/rest';
-import config from '../config';
+import routes from '../infrastructure/rest';
+import {Container} from "./Container";
+import {Environment} from "./environment";
 
 interface HttpError extends Error {
   status: number;
 }
 
-//import config from '../config';
-export default ({ app }: { app: express.Application }) => {
+export default (container: Container, config: Environment) => {
+  const app = express();
+
   // Useful if you're behind a reverse proxy (Heroku, Bluemix, AWS ELB, Nginx, etc)
   // It shows the real origin IP in the heroku or Cloudwatch logs
   app.enable('trust proxy');
@@ -17,7 +19,7 @@ export default ({ app }: { app: express.Application }) => {
   app.use(bodyParser.json());
 
   // Load API routes
-  app.use(config.api.prefix, routes());
+  app.use(config.API_PREFIX, routes());
 
   /// catch 404 and forward to error handler
   app.use((req, res, next) => {
