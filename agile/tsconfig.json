@@ -1,7 +1,9 @@
 {
   "compilerOptions": {
     "lib": [
-      "es2018"
+      "es2018",
+      "webworker",
+      "es2020.string"
     ],
     "typeRoots": [
       "./node_modules/@types",

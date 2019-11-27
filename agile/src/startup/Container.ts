@@ -5,6 +5,7 @@ import NewTicketsCollector from "../domain/NewTicketsCollector";
 import DataCollectionService from "../application/DataCollectionService";
 import EventBus from "../domain/EventBus";
 import JobScheduler from "../infrastructure/job/JobScheduler";
+import JiraClient from "../infrastructure/http/JiraClient";
 
 export class Container {
     private constructor(
@@ -20,7 +21,9 @@ export class Container {
         const eventBus = await startEventBus();
 
         const dataCollectionExecutive = new DataCollectionExecutive(eventBus);
-        const newTicketsCollector = new NewTicketsCollector(eventBus);
+        const newTicketsCollector = new NewTicketsCollector(
+            new JiraClient(config.JIRA_URL, config.JIRA_USER, config.JIRA_API_TOKEN),
+            eventBus);
 
         const dataCollectionService = new DataCollectionService(dataCollectionExecutive, eventBus);
 
