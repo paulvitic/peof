@@ -9,20 +9,20 @@ class JiraUser {
                 readonly accountId: string) {}
 }
 
-class Sprint {
+class JiraSprint {
     constructor(
         readonly id: string | undefined,
         readonly name: string | undefined,
         readonly state: string | undefined) {}
 
-    static fromString = (str: string[]): Sprint[] =>  {
+    static fromString = (str: string[]): JiraSprint[] =>  {
         const regex = /id=(?<id>[^,]+),{1}|state=(?<state>[^,]+),{1}|name=(?<name>[^,]+),{1}/g;
-        const sprints = new Array<Sprint>();
+        const sprints = new Array<JiraSprint>();
         if (str && str.length > 0){
             for (let s of str) {
                 const [tag1, tag2, tag3] = s.matchAll(regex);
                 if (tag1 && tag2 && tag3) {
-                    sprints.push(new Sprint(
+                    sprints.push(new JiraSprint(
                         tag1.groups ? tag1.groups.id : undefined,
                         tag2.groups ? tag2.groups.state : undefined,
                         tag3.groups ? tag3.groups.name : undefined));
@@ -33,7 +33,7 @@ class Sprint {
     }
 }
 
-class Issue {
+class JiraIssue {
     constructor(
         readonly id: string,
         readonly key: string,
@@ -42,27 +42,27 @@ class Issue {
         readonly project: Identity,
         readonly issueType: Identity,
         readonly status: Identity,
-        readonly sprints: Sprint[],
+        readonly sprints: JiraSprint[],
         readonly labels: string[],
         readonly assignee: JiraUser | null) {
     }
 }
 
-export class Issues {
-    readonly issues = new Array<Issue>();
+export class JiraIssues {
+    readonly issues = new Array<JiraIssue>();
     constructor(readonly startAt: number,
                 readonly maxResults: number,
                 readonly total: number) {}
-    addIssue = (issue: Issue) => {
+    addIssue = (issue: JiraIssue) => {
         this.issues.push(issue)
     }
 }
 
 export class Convert {
-    public static toIssues(json: any): Issues {
-        const issues = new Issues(json.startAt, json.maxResults, json.total);
+    public static toIssues(json: any): JiraIssues {
+        const issues = new JiraIssues(json.startAt, json.maxResults, json.total);
         for (let issue of json.issues) {
-            issues.addIssue(new Issue(
+            issues.addIssue(new JiraIssue(
                 issue.id,
                 issue.key,
                 new Date(issue.fields.created),
@@ -70,7 +70,7 @@ export class Convert {
                 new Identity(issue.fields.project.id, issue.fields.project.name),
                 new Identity(issue.fields.issuetype.id, issue.fields.issuetype.name),
                 new Identity(issue.fields.status.id, issue.fields.status.name),
-                Sprint.fromString(issue.fields.customfield_10010),
+                JiraSprint.fromString(issue.fields.customfield_10010),
                 issue.fields.labels,
                 issue.fields.assignee ? new JiraUser(issue.fields.assignee.name, issue.fields.assignee.accountId) : null
                 )

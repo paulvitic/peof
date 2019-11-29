@@ -4,13 +4,13 @@ import DataCollectionExecutive from "../domain/DataCollectionExecutive";
 
 export default class DataCollectionService extends ApplicationService {
 
-    constructor (private readonly processor: DataCollectionExecutive,
+    constructor (private readonly executive: DataCollectionExecutive,
                  eventBus: EventBus){
         super(eventBus);
     }
 
-    collectData(): void {
+    start(): void {
        global.log.info("Service starting data collection.");
-       this.processor.start();
+       this.executive.start().onSuccess(()=> global.log.info("Service started data collection."));
     }
 }

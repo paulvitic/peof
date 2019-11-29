@@ -1,8 +1,8 @@
-import TicketDataCollector from "../../domain/TicketDataCollector";
+import DataCollectionClient from "../../domain/DataCollectionClient";
 import request, {Response} from 'request';
 import { Convert } from "./JiraTranslator";
 
-export default class JiraClient implements TicketDataCollector {
+export default class JiraClient implements DataCollectionClient {
 
     private readonly and ="AND ";
     private readonly openTickets = "status not in (Closed, Done) ";

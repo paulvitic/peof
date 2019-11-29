@@ -1,7 +1,6 @@
 import {Environment} from "./environment";
 import startEventBus from "./eventBus";
-import DataCollectionExecutive from "../domain/DataCollectionExecutive";
-import NewTicketsCollector from "../domain/NewTicketsCollector";
+import { DataCollectionTracker, UpdatedTicketsCollector } from "../domain/DataCollectionProcess";
 import DataCollectionService from "../application/DataCollectionService";
 import EventBus from "../domain/EventBus";
 import JobScheduler from "../infrastructure/job/JobScheduler";
@@ -10,8 +9,8 @@ import JiraClient from "../infrastructure/http/JiraClient";
 export class Container {
     private constructor(
         readonly eventBus: EventBus,
-        readonly dataCollectionExecutive: DataCollectionExecutive,
-        readonly newTicketsCollector: NewTicketsCollector,
+        readonly dataCollectionExecutive: DataCollectionTracker,
+        readonly newTicketsCollector: UpdatedTicketsCollector,
         readonly dataCollectionService: DataCollectionService,
         readonly joScheduler: JobScheduler,
     ) {}
@@ -20,8 +19,8 @@ export class Container {
 
         const eventBus = await startEventBus();
 
-        const dataCollectionExecutive = new DataCollectionExecutive(eventBus);
-        const newTicketsCollector = new NewTicketsCollector(
+        const dataCollectionExecutive = new DataCollectionTracker(eventBus);
+        const newTicketsCollector = new UpdatedTicketsCollector(
             new JiraClient(config.JIRA_URL, config.JIRA_USER, config.JIRA_API_TOKEN),
             eventBus);
 

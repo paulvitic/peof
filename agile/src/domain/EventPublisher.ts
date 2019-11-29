@@ -1,5 +1,6 @@
 import DomainEvent from "./DomainEvent";
+import {AggregateRoot} from "./AggregateRoot";
 
 export default interface EventPublisher {
-    publish(event: DomainEvent ): void
+    publishEventsOf(aggregate: AggregateRoot ): void
 }
