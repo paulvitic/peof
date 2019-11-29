@@ -12,20 +12,16 @@ export abstract class AggregateRoot {
         this._domainEvents = new Array<DomainEvent>()
     }
 
-    protected get id() {
+    public get id() {
         return this._id;
     }
 
-    protected get type() {
+    public get type() {
         return this._type;
     }
 
     public get domainEvents() {
         return this._domainEvents;
-    }
-
-    public addDomainEvent(event: DomainEvent) {
-        this.domainEvents.push(event);
     }
 
     public clearDomainEvents() {
