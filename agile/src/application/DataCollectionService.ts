@@ -9,9 +9,9 @@ export default class DataCollectionService extends ApplicationService {
         super(eventBus);
     }
 
-    start(): void {
+    start(forChangesSince: Date): void {
        global.log.info("Service starting data collection.");
-       this.executive.start()
+       this.executive.start(forChangesSince)
            .onSuccess(() => global.log.info("Service started data collection"))
            .else((error) => global.log.error(error.reason));
     }

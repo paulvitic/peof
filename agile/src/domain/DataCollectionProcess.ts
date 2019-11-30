@@ -33,9 +33,9 @@ export class DataCollectionTracker extends DataCollectionProcess {
         super(eventBus);
     }
 
-    public start(): void {
-        DataCollection.create()
-            .onSuccess((dataCollection) => this.repository.save(dataCollection)
+    public start(forChangesSince: Date): void {
+        DataCollection.create(forChangesSince)
+            .then((dataCollection) =>this.repository.save(dataCollection)
                 .then((saved) => this.publishEventsOf(saved)
                     .then(() => global.log.info("Data collection started"))));
     }

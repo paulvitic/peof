@@ -14,15 +14,23 @@ interface DataCollectionProperties {
 }
 
 export default class DataCollection extends AggregateRoot {
-    private startDate: Date;
 
-    constructor() {
+    private readonly startDate: Date;
+
+    constructor(private readonly changesSince: Date) {
         super();
         this.startDate = new Date();
-        this.generateEvent(new DataCollectionStarted(this.type, this.id))
+        this.generateEvent(
+            new DataCollectionStarted(
+                this.type,
+                this.id,
+                this.startDate,
+                this.changesSince
+            )
+        );
     }
 
-    static create(): Except<Failure<DataCollectionError.InvalidCreationArguments>, DataCollection> {
-        return withSuccess(new DataCollection());
+    static create = async (changesSince: Date): Promise<DataCollection> => {
+        return new DataCollection(changesSince);
     }
 }

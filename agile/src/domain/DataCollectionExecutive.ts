@@ -16,8 +16,8 @@ export default class DataCollectionExecutive {
                 private readonly tracker: DataCollectionTracker) {
     }
 
-    start(): Except<Failure<DataCollectionError.CollectionAlreadyRunning>, void>{
+    start(forChangesSince: Date): Except<Failure<DataCollectionError.CollectionAlreadyRunning>, void>{
         if(this.view.thereIsRunningCollection()) return withFailure(collectionAlreadyRunning());
-        return withSuccess(this.tracker.start());
+        return withSuccess(this.tracker.start(forChangesSince));
     }
 }
