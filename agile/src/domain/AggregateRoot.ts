@@ -20,10 +20,10 @@ export abstract class AggregateRoot {
         return this._type;
     }
 
-    public publishEventsUsing(publish: (event: DomainEvent) => void) {
+    public publishEventsUsing(publisher: (event: DomainEvent) => void) {
         let nextEvent = this._domainEvents.pop();
         while (nextEvent) {
-            publish(nextEvent);
+            publisher(nextEvent);
             nextEvent = this._domainEvents.pop();
         }
     }

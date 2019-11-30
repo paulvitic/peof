@@ -1,35 +1,56 @@
+type IdentityProperties = {
+    readonly id: string,
+    readonly name: string
+}
 
 class Identity {
-    constructor(readonly id: string,
-                readonly name: string) {}
+    private constructor(props: IdentityProperties) {
+    }
+    static from = (props: IdentityProperties) => {
+        return new Identity(props)
+    }
+}
+
+type JiraUserProperties = {
+    readonly name: string,
+    readonly accountId: string
 }
 
 class JiraUser {
-    constructor(readonly name: string,
-                readonly accountId: string) {}
+    private constructor(props: JiraUserProperties) {
+    }
+    static from = (props: JiraUserProperties | undefined): JiraUser | null => {
+        if (props) {
+            return new JiraUser(props);
+        }
+        return null;
+    }
 }
 
 class JiraSprint {
     constructor(
         readonly id: string | undefined,
         readonly name: string | undefined,
-        readonly state: string | undefined) {}
+        readonly state: string | undefined) {
+    }
 
-    static fromString = (str: string[]): JiraSprint[] =>  {
-        const regex = /id=(?<id>[^,]+),{1}|state=(?<state>[^,]+),{1}|name=(?<name>[^,]+),{1}/g;
+    static fromString = (str: string[]): JiraSprint[] => {
         const sprints = new Array<JiraSprint>();
-        if (str && str.length > 0){
+        if (str && str.length > 0) {
             for (let s of str) {
-                const [tag1, tag2, tag3] = s.matchAll(regex);
-                if (tag1 && tag2 && tag3) {
-                    sprints.push(new JiraSprint(
-                        tag1.groups ? tag1.groups.id : undefined,
-                        tag2.groups ? tag2.groups.state : undefined,
-                        tag3.groups ? tag3.groups.name : undefined));
-                }
+                sprints.push(JiraSprint.parseSprint(s));
             }
         }
         return sprints;
+    };
+
+    static parseSprint = (s: string): JiraSprint => {
+        const regex = /id=(?<id>[^,]+),{1}|state=(?<state>[^,]+),{1}|name=(?<name>[^,]+),{1}/g;
+        const [tag1, tag2, tag3] = s.matchAll(regex);
+        const sprintId = tag1 && tag1.groups ? tag1.groups.id : undefined;
+        const sprintState = tag2 && tag2.groups ? tag2.groups.state : undefined;
+        const sprintName = tag3 && tag3.groups ? tag3.groups.name : undefined;
+        return new JiraSprint(sprintId, sprintState, sprintName);
     }
 }
 
@@ -50,9 +71,12 @@ class JiraIssue {
 
 export class JiraIssues {
     readonly issues = new Array<JiraIssue>();
+
     constructor(readonly startAt: number,
                 readonly maxResults: number,
-                readonly total: number) {}
+                readonly total: number) {
+    }
+
     addIssue = (issue: JiraIssue) => {
         this.issues.push(issue)
     }
@@ -60,20 +84,21 @@ export class JiraIssues {
 
 export class Convert {
     public static toIssues(json: any): JiraIssues {
+
         const issues = new JiraIssues(json.startAt, json.maxResults, json.total);
+
         for (let issue of json.issues) {
             issues.addIssue(new JiraIssue(
                 issue.id,
                 issue.key,
                 new Date(issue.fields.created),
                 new Date(issue.fields.updated),
-                new Identity(issue.fields.project.id, issue.fields.project.name),
-                new Identity(issue.fields.issuetype.id, issue.fields.issuetype.name),
-                new Identity(issue.fields.status.id, issue.fields.status.name),
+                Identity.from(issue.fields.project),
+                Identity.from(issue.fields.issuetype),
+                Identity.from(issue.fields.status),
                 JiraSprint.fromString(issue.fields.customfield_10010),
                 issue.fields.labels,
-                issue.fields.assignee ? new JiraUser(issue.fields.assignee.name, issue.fields.assignee.accountId) : null
-                )
+                JiraUser.from(issue.fields.assignee))
             )
         }
         return issues;
