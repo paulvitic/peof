@@ -11,6 +11,8 @@ export default class DataCollectionService extends ApplicationService {
 
     start(): void {
        global.log.info("Service starting data collection.");
-       this.executive.start().onSuccess(()=> global.log.info("Service started data collection."));
+       this.executive.start()
+           .onSuccess(() => global.log.info("Service started data collection"))
+           .else((error) => global.log.error(error.reason));
     }
 }

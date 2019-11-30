@@ -2,7 +2,7 @@ import EventListener from "./EventListener";
 import DomainEvent from "./DomainEvent";
 import EventPublisher from "./EventPublisher";
 import EventBus from "./EventBus";
-import { DataCollectionStarted, UpdatedTicketsCollected } from "./DataCollectionEvents";
+import { DataCollectionStarted, UpdatedTicketsCollected } from "./DataCollectionEvent";
 import DataCollectionClient from "./DataCollectionClient";
 import {Repository} from "./Repository";
 import DataCollection from "./DataCollection";
@@ -13,10 +13,7 @@ abstract class DataCollectionProcess implements EventPublisher, EventListener {
     protected constructor(private readonly eventBus: EventBus) {}
 
     publishEventsOf = async (aggregate: AggregateRoot): Promise<void> => {
-        for (let event of aggregate.domainEvents) {
-            this.eventBus.publish(event);
-        }
-        aggregate.clearDomainEvents();
+        aggregate.publishEventsUsing(this.eventBus.publish);
     };
 
     publish = async (event: DomainEvent) => {

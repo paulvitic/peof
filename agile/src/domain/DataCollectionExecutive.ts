@@ -1,8 +1,13 @@
-import DataCollection, {DataCollectionError, collectionAlreadyRunning} from "./DataCollection";
+import DataCollection, {DataCollectionError} from "./DataCollection";
 import {Except, withFailure, Failure, withSuccess} from "./Except";
 import {Repository} from "./Repository";
 import {DataCollectionView} from "./DataCollectionView";
 import {DataCollectionTracker} from "./DataCollectionProcess";
+
+const collectionAlreadyRunning = (): Failure<number> => ({
+    type: DataCollectionError.CollectionAlreadyRunning,
+    reason: 'A data collection is already running.',
+});
 
 export default class DataCollectionExecutive {
 

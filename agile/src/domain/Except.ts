@@ -1,57 +1,65 @@
 // https://medium.com/inato/expressive-error-handling-in-typescript-and-benefits-for-domain-driven-design-70726e061c86
-export interface Failure<F> {
-    type: F;
+export interface Failure<T> {
+    type: T;
     reason: string;
 }
 
-export type Except<L extends Failure<string | number>, A> = Fail<L, A> | Succeed<L, A>;
+export type Except<F extends Failure<number | string>, S> = Fail<F, S> | Succeed<F, S>;
 
-export class Fail<L extends Failure<string | number>, A> {
-    readonly value: L;
+export class Fail<F extends Failure<number | string>, S> {
+    readonly value: F;
 
-    constructor(value: L) {
+    constructor(value: F) {
         this.value = value;
     }
 
-    failed(): this is Fail<L, A> {
+    failed(): this is Fail<F, S> {
         return true;
     }
 
-    succeeded(): this is Succeed<L, A> {
+    succeeded(): this is Succeed<F, S> {
         return false;
     }
 
-    onSuccess<B>(_: (a: A) => B): Except<L, B> {
+    onSuccess<N>(_: (newSuccess: S) => N): Except<F, N> {
         return this as any;
     }
+
+    else(funct: (value: F) => void): void {
+        funct(this.value);
+    }
 }
 
-export class Succeed<L extends Failure<string | number>, A> {
-    readonly value: A;
+export class Succeed<F extends Failure<string | number>, S> {
+    readonly value: S;
 
-    constructor(value: A) {
+    constructor(value: S) {
         this.value = value;
     }
 
-    failed(): this is Fail<L, A> {
+    failed(): this is Fail<F, S> {
         return false;
     }
 
-    succeeded(): this is Succeed<L, A> {
+    succeeded(): this is Succeed<F, S> {
         return true;
     }
 
-    onSuccess<B>(func: (a: A) => B): Except<L, B> {
+    onSuccess<N>(func: (value: S) => N): Except<F, N> {
         return new Succeed(func(this.value));
+    }
+
+    else(_: (value: F) => void): Except<F, S> {
+        return new Succeed(this.value);
     }
 }
 
-export const withFailure = <L extends Failure<string | number>, A>(l: L): Except<L, A> => {
-    return new Fail(l);
+export const withFailure = <F extends Failure<string | number>, S>(fail: F): Except<F, S> => {
+    return new Fail(fail);
 };
 
-export const withSuccess = <L extends Failure<string | number>, A>(a: A): Except<L, A> => {
-    return new Succeed<L, A>(a);
+export const withSuccess = <F extends Failure<string | number>, S>(succes: S): Except<F, S> => {
+    return new Succeed<F, S>(succes);
 };
 
 

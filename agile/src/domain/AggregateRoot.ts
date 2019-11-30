@@ -20,11 +20,15 @@ export abstract class AggregateRoot {
         return this._type;
     }
 
-    public get domainEvents() {
-        return this._domainEvents;
+    public publishEventsUsing(publish: (event: DomainEvent) => void) {
+        let nextEvent = this._domainEvents.pop();
+        while (nextEvent) {
+            publish(nextEvent);
+            nextEvent = this._domainEvents.pop();
+        }
     }
 
-    public clearDomainEvents() {
-        this.domainEvents.splice(0, this.domainEvents.length);
+    protected generateEvent(event: DomainEvent): void {
+        this._domainEvents.push(event);
     }
 }

@@ -1,16 +1,11 @@
 import {Except, Failure, withSuccess} from "./Except";
 import {AggregateRoot} from "./AggregateRoot";
+import {DataCollectionStarted} from "./DataCollectionEvent";
 
 export enum DataCollectionError {
     InvalidCreationArguments,
     CollectionAlreadyRunning,
 }
-
-export const collectionAlreadyRunning = (): Failure<number> => ({
-    type: DataCollectionError.CollectionAlreadyRunning,
-    reason: 'Email, Firstname and Lastname cannot be empty',
-});
-
 
 interface DataCollectionProperties {
     email: string;
@@ -24,6 +19,7 @@ export default class DataCollection extends AggregateRoot {
     constructor() {
         super();
         this.startDate = new Date();
+        this.generateEvent(new DataCollectionStarted(this.type, this.id))
     }
 
     static create(): Except<Failure<DataCollectionError.InvalidCreationArguments>, DataCollection> {
