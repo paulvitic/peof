@@ -7,7 +7,9 @@ import DataCollectionClient from "./DataCollectionClient";
 import {Repository} from "./Repository";
 import DataCollection from "./DataCollection";
 import {AggregateRoot} from "./AggregateRoot";
-import {JiraIssue} from "./Ticket";
+import {Ticket} from "./Ticket";
+
+export type TicketUpdatesPublisher = (updates: Ticket[]) => void;
 
 /**
  *
@@ -71,12 +73,12 @@ export class UpdatedTicketsCollector extends DataCollectionProcess {
         }
     };
 
-    private collectUpdatedTickets = (aggregateId: string) =>  {
-        this.dataCollectionClient.ticketsUpdatedSince(new Date(), this.publishUpdates(aggregateId));
+    private collectUpdatedTickets = (aggregateId: string): void =>  {
+        this.dataCollectionClient.ticketsUpdatedSince(new Date(), this.ticketUpdatesPublisher(aggregateId));
     };
 
-    private publishUpdates = (aggregateId: string) => {
-        return (updates : JiraIssue[]) => {
+    private ticketUpdatesPublisher = (aggregateId: string): TicketUpdatesPublisher => {
+        return (updates : Ticket[]) => {
             this.publish(new UpdatedTicketsFound(
                 DataCollection.name,
                 aggregateId,

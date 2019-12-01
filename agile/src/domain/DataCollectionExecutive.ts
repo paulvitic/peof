@@ -1,7 +1,7 @@
 import DataCollection, {DataCollectionError} from "./DataCollection";
 import {Except, withFailure, Failure, withSuccess} from "./Except";
 import {Repository} from "./Repository";
-import {DataCollectionView} from "./DataCollectionView";
+import {DataCollectionStatus} from "./DataCollectionStatus";
 import {DataCollectionTracker} from "./DataCollectionProcess";
 
 /**
@@ -17,7 +17,7 @@ const collectionAlreadyRunning = (): Failure<number> => ({
  */
 export default class DataCollectionExecutive {
     constructor(private readonly repository: Repository<DataCollection>,
-                private readonly view: DataCollectionView,
+                private readonly view: DataCollectionStatus,
                 private readonly tracker: DataCollectionTracker) {
     }
 

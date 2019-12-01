@@ -1,9 +1,9 @@
-import {DataCollectionView} from "../../domain/DataCollectionView";
+import {DataCollectionStatus} from "../../domain/DataCollectionStatus";
 
 /**
  *
  */
-export default class FakeDataCollectionView implements DataCollectionView{
+export default class FakeDataCollectionView implements DataCollectionStatus{
     thereIsRunningCollection(): boolean {
         return false;
     }

@@ -1,3 +1,3 @@
-export interface DataCollectionView {
+export interface DataCollectionStatus {
     thereIsRunningCollection(): boolean
 }

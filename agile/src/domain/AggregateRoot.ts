@@ -15,6 +15,8 @@ export abstract class AggregateRoot {
         this._domainEvents = new Array<DomainEvent>()
     }
 
+    //abstract fromEvents(events: DomainEvent[]):AggregateRoot {}
+
     public get id() {
         return this._id;
     }

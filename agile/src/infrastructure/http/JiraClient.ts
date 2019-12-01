@@ -1,9 +1,9 @@
 import DataCollectionClient from "../../domain/DataCollectionClient";
+import {TicketUpdatesPublisher} from "../../domain/DataCollectionProcess";
 import request, {Response} from 'request';
 import { Convert } from "./JiraTranslator";
-import DomainEvent from "../../domain/DomainEvent";
-import {UpdatedTicketsFound} from "../../domain/DataCollectionEvent";
-import {JiraIssue} from "../../domain/Ticket";
+
+type RequestHandler = (error: any, response: request.Response, body: object) => void;
 
 /**
  *
@@ -18,7 +18,7 @@ export default class JiraClient implements DataCollectionClient {
                 private readonly jiraUser: string,
                 private readonly jiraApiToken: string) {}
 
-    ticketsUpdatedSince(date: Date, publishUpdatesUsing: (updates: JiraIssue[]) => void): void {
+    ticketsUpdatedSince(date: Date, publishUpdatesUsing: TicketUpdatesPublisher): void {
         const query = "?jql=" + encodeURI(
             this.openTickets + this.and +
             this.projects + this.and +
@@ -27,10 +27,10 @@ export default class JiraClient implements DataCollectionClient {
         const url = this.jiraUrl + query + fields;
 
         const Authorization = `Basic ${Buffer.from(this.jiraUser + ":" + this.jiraApiToken).toString("base64")}`;
-        request({url, headers: {Authorization}, json: true}, this.handleResponse(publishUpdatesUsing));
+        request({url, headers: {Authorization}, json: true}, this.responseHandler(publishUpdatesUsing));
     }
 
-    private handleResponse = (publishUpdatesUsing: (updates: JiraIssue[]) => void): (error: any, response: request.Response, body: object) => void => {
+    private responseHandler = (publishUpdatesUsing: TicketUpdatesPublisher): RequestHandler => {
         return (error: any, response: Response, body: object) => {
             if (error) {
                 console.error(error.message);
