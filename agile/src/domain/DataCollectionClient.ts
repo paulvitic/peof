@@ -1,3 +1,8 @@
+import {JiraIssue} from "./Ticket";
+
+/**
+ *
+ */
 export default interface DataCollectionClient {
-    ticketsCreatedSince(date: Date): void;
+    ticketsUpdatedSince(date: Date, handle: (updates: JiraIssue[]) => void) : void;
 }

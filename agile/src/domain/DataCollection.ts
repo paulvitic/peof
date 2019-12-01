@@ -1,21 +1,20 @@
-import {Except, Failure, withSuccess} from "./Except";
 import {AggregateRoot} from "./AggregateRoot";
 import {DataCollectionStarted} from "./DataCollectionEvent";
 
+/**
+ *
+ */
 export enum DataCollectionError {
     InvalidCreationArguments,
     CollectionAlreadyRunning,
 }
 
-interface DataCollectionProperties {
-    email: string;
-    firstName: string;
-    lastName: string;
-}
-
+/**
+ *
+ */
 export default class DataCollection extends AggregateRoot {
-
     private readonly startDate: Date;
+    private updatedTicketsCollected: boolean = false;
 
     constructor(private readonly changesSince: Date) {
         super();
@@ -30,7 +29,7 @@ export default class DataCollection extends AggregateRoot {
         );
     }
 
-    static create = async (changesSince: Date): Promise<DataCollection> => {
+    static start = async (changesSince: Date): Promise<DataCollection> => {
         return new DataCollection(changesSince);
     }
 }

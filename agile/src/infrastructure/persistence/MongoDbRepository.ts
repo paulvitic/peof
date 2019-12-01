@@ -1,5 +1,8 @@
 import {Repository} from "../../domain/Repository";
 
+/**
+ *
+ */
 export default abstract class MongoDbRepository<T> implements Repository<T> {
 
     abstract save(item: T): Promise<T>;

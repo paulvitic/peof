@@ -1,8 +1,10 @@
 import cron from "node-cron";
 import DataCollectionService from "../../application/DataCollectionService";
 
+/**
+ *
+ */
 export default class JobScheduler {
-
     constructor(private readonly cronExpression: string,
                 private readonly service: DataCollectionService) {
         this.schedule();

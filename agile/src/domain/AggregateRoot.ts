@@ -1,6 +1,9 @@
 import DomainEvent from "./DomainEvent";
 import Identity from "./Identity";
 
+/**
+ *
+ */
 export abstract class AggregateRoot {
     private readonly _id: string;
     private readonly _type: string;

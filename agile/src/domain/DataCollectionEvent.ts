@@ -1,5 +1,9 @@
 import {AbstractDomainEvent} from "./DomainEvent";
+import {JiraIssue} from "./Ticket";
 
+/**
+ *
+ */
 export class DataCollectionStarted extends AbstractDomainEvent {
     constructor(aggregate: string,
                 aggregateId: string,
@@ -9,6 +13,13 @@ export class DataCollectionStarted extends AbstractDomainEvent {
     }
 }
 
-export class UpdatedTicketsCollected extends AbstractDomainEvent {
-
+/**
+ *
+ */
+export class UpdatedTicketsFound extends AbstractDomainEvent {
+    constructor(aggregate: string,
+                aggregateId: string,
+                readonly updates: JiraIssue[]) {
+        super(aggregate, aggregateId);
+    }
 }

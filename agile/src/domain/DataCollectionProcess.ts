@@ -1,15 +1,18 @@
 import EventListener from "./EventListener";
-import DomainEvent from "./DomainEvent";
+import DomainEvent, {EventType} from "./DomainEvent";
 import EventPublisher from "./EventPublisher";
 import EventBus from "./EventBus";
-import { DataCollectionStarted, UpdatedTicketsCollected } from "./DataCollectionEvent";
+import {DataCollectionStarted, UpdatedTicketsFound} from "./DataCollectionEvent";
 import DataCollectionClient from "./DataCollectionClient";
 import {Repository} from "./Repository";
 import DataCollection from "./DataCollection";
 import {AggregateRoot} from "./AggregateRoot";
+import {JiraIssue} from "./Ticket";
 
+/**
+ *
+ */
 abstract class DataCollectionProcess implements EventPublisher, EventListener {
-
     protected constructor(private readonly eventBus: EventBus) {}
 
     publishEventsOf = async (aggregate: AggregateRoot): Promise<void> => {
@@ -25,16 +28,17 @@ abstract class DataCollectionProcess implements EventPublisher, EventListener {
     abstract on(event: DomainEvent): DomainEvent | void;
 }
 
-
+/**
+ *
+ */
 export class DataCollectionTracker extends DataCollectionProcess {
-
     constructor(eventBus: EventBus,
                 private readonly repository: Repository<DataCollection>) {
         super(eventBus);
     }
 
-    public start(forChangesSince: Date): void {
-        DataCollection.create(forChangesSince)
+    public startDataCollection(forChangesSince: Date): void {
+        DataCollection.start(forChangesSince)
             .then((dataCollection) =>this.repository.save(dataCollection)
                 .then((saved) => this.publishEventsOf(saved)
                     .then(() => global.log.info("Data collection started"))));
@@ -45,9 +49,10 @@ export class DataCollectionTracker extends DataCollectionProcess {
     }
 }
 
-
+/**
+ *
+ */
 export class UpdatedTicketsCollector extends DataCollectionProcess {
-
     constructor(private readonly dataCollectionClient: DataCollectionClient,
                 eventBus: EventBus) {
         super(eventBus);
@@ -55,7 +60,7 @@ export class UpdatedTicketsCollector extends DataCollectionProcess {
 
     public on = (event: DataCollectionStarted): void => {
         switch(event.eventType()) {
-            case "DataCollectionStarted": {
+            case EventType.DataCollectionStarted: {
                 this.collectUpdatedTickets(event.aggregateId());
                 break;
             }
@@ -67,8 +72,16 @@ export class UpdatedTicketsCollector extends DataCollectionProcess {
     };
 
     private collectUpdatedTickets = (aggregateId: string) =>  {
-        this.dataCollectionClient.ticketsCreatedSince(new Date());
-        const newEvent = new UpdatedTicketsCollected("DataCollection", aggregateId);
-        this.publish(newEvent).then(() => global.log.info("Newly created ticket data collected"));
-    }
+        this.dataCollectionClient.ticketsUpdatedSince(new Date(), this.publishUpdates(aggregateId));
+    };
+
+    private publishUpdates = (aggregateId: string) => {
+        return (updates : JiraIssue[]) => {
+            this.publish(new UpdatedTicketsFound(
+                DataCollection.name,
+                aggregateId,
+                updates)
+            ).then(()=> global.log.info(`${updates.length} ticket updates published`))
+        }
+    };
 }

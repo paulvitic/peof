@@ -1,3 +1,6 @@
+/**
+ *
+ */
 export default class Identity {
 
     static generateWithPrefix(prefix: string): string {

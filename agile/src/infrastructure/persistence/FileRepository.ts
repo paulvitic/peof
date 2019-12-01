@@ -3,10 +3,11 @@ import fs from "fs"
 import {AggregateRoot} from "../../domain/AggregateRoot";
 import DataCollection from "../../domain/DataCollection";
 
+/**
+ *
+ */
 export abstract class FileRepository<T extends AggregateRoot> implements Repository<T> {
-
-    constructor(private readonly rootPath: string) {
-    }
+    constructor(private readonly rootPath: string) {}
 
     delete(id: string): Promise<boolean> {
         try {

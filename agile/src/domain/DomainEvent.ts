@@ -1,18 +1,31 @@
+/**
+ *
+ */
+export enum EventType {
+    DataCollectionStarted,
+    UpdatedTicketsFound
+}
+
+/**
+ *
+ */
 export default interface DomainEvent {
-    eventType(): string;
+    eventType(): EventType;
     aggregate(): string;
     aggregateId(): string;
     generatedOn(): Date;
 }
 
+/**
+ *
+ */
 export abstract class AbstractDomainEvent implements DomainEvent {
-
     private readonly _generatedOn: Date;
-    private readonly _eventType: string;
+    private readonly _eventType: EventType;
 
     constructor(private readonly _aggregate: string,
                 private readonly _aggregateId: string) {
-        this._eventType = this.constructor.name;
+        this._eventType = (<any>EventType)[this.constructor.name];
         this._generatedOn= new Date();
     }
 
@@ -28,7 +41,7 @@ export abstract class AbstractDomainEvent implements DomainEvent {
         return this._generatedOn;
     }
 
-    eventType(): string {
+    eventType(): EventType {
         return this._eventType;
     }
 }

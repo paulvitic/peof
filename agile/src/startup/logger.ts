@@ -3,6 +3,7 @@ import {Environment} from "./environment";
 
 export default (config: Environment) => {
     const transports = [];
+
     if(process.env.NODE_ENV !== 'development') {
         transports.push(
             new winston.transports.Console()
@@ -17,6 +18,7 @@ export default (config: Environment) => {
             })
         )
     }
+
     const Logger = winston.createLogger({
         level: config.LOG_LEVEL,
         levels: winston.config.npm.levels,

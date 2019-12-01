@@ -1,11 +1,19 @@
-// https://medium.com/inato/expressive-error-handling-in-typescript-and-benefits-for-domain-driven-design-70726e061c86
+/**
+ *
+ */
 export interface Failure<T> {
     type: T;
     reason: string;
 }
 
+/**
+ *
+ */
 export type Except<F extends Failure<number | string>, S> = Fail<F, S> | Succeed<F, S>;
 
+/**
+ *
+ */
 export class Fail<F extends Failure<number | string>, S> {
     readonly value: F;
 
@@ -30,6 +38,9 @@ export class Fail<F extends Failure<number | string>, S> {
     }
 }
 
+/**
+ *
+ */
 export class Succeed<F extends Failure<string | number>, S> {
     readonly value: S;
 
@@ -54,12 +65,18 @@ export class Succeed<F extends Failure<string | number>, S> {
     }
 }
 
+/**
+ *
+ * @param fail
+ */
 export const withFailure = <F extends Failure<string | number>, S>(fail: F): Except<F, S> => {
     return new Fail(fail);
 };
 
-export const withSuccess = <F extends Failure<string | number>, S>(succes: S): Except<F, S> => {
-    return new Succeed<F, S>(succes);
+/**
+ *
+ * @param success
+ */
+export const withSuccess = <F extends Failure<string | number>, S>(success: S): Except<F, S> => {
+    return new Succeed<F, S>(success);
 };
-
-

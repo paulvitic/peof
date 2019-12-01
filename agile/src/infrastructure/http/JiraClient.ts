@@ -1,9 +1,14 @@
 import DataCollectionClient from "../../domain/DataCollectionClient";
 import request, {Response} from 'request';
 import { Convert } from "./JiraTranslator";
+import DomainEvent from "../../domain/DomainEvent";
+import {UpdatedTicketsFound} from "../../domain/DataCollectionEvent";
+import {JiraIssue} from "../../domain/Ticket";
 
+/**
+ *
+ */
 export default class JiraClient implements DataCollectionClient {
-
     private readonly and ="AND ";
     private readonly openTickets = "status not in (Closed, Done) ";
     private readonly projects = "project in (Contact) ";
@@ -13,7 +18,7 @@ export default class JiraClient implements DataCollectionClient {
                 private readonly jiraUser: string,
                 private readonly jiraApiToken: string) {}
 
-    ticketsCreatedSince(date: Date) {
+    ticketsUpdatedSince(date: Date, publishUpdatesUsing: (updates: JiraIssue[]) => void): void {
         const query = "?jql=" + encodeURI(
             this.openTickets + this.and +
             this.projects + this.and +
@@ -22,19 +27,19 @@ export default class JiraClient implements DataCollectionClient {
         const url = this.jiraUrl + query + fields;
 
         const Authorization = `Basic ${Buffer.from(this.jiraUser + ":" + this.jiraApiToken).toString("base64")}`;
-
-        global.log.info(Authorization);
-
-        request({url, headers: {Authorization}, json: true}, this.handle);
+        request({url, headers: {Authorization}, json: true}, this.handleResponse(publishUpdatesUsing));
     }
 
-    private handle = (error: any, response: Response, body: object) => {
-        if (error) {
-            console.error(error.message);
-        } else {
-            const issues = Convert.toIssues(body);
-            console.log(JSON.stringify(issues, null, 2));
-        }
+    private handleResponse = (publishUpdatesUsing: (updates: JiraIssue[]) => void): (error: any, response: request.Response, body: object) => void => {
+        return (error: any, response: Response, body: object) => {
+            if (error) {
+                console.error(error.message);
+            } else {
+                const issues = Convert.toIssues(body);
+                global.log.info(`${issues.total} issue updates found.`);
+                publishUpdatesUsing(issues.issues);
+            }
+        };
     };
 
     private toDateString = (date: Date) => {
