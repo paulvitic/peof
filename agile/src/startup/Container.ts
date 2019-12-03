@@ -8,7 +8,6 @@ import JiraClient from "../infrastructure/http/JiraClient";
 import {DataCollectionFileRepo, FileRepository} from "../infrastructure/persistence/FileRepository";
 import DataCollectionExecutive from "../domain/DataCollectionExecutive";
 import FakeDataCollectionView from "../infrastructure/persistence/FakeDataCollectionView";
-import {EventType} from "../domain/DomainEvent";
 import {DataCollectionStarted, UpdatedTicketsFound} from "../domain/DataCollectionEvent";
 
 export class Container {
@@ -34,8 +33,8 @@ export class Container {
 
         const dataCollectionService = new DataCollectionService(dataCollectionExecutive, eventBus);
 
-        eventBus.subscribe(EventType[EventType.DataCollectionStarted], newTicketsCollector);
-        eventBus.subscribe(EventType[EventType.UpdatedTicketsFound], dataCollectionTracker);
+        eventBus.subscribe(DataCollectionStarted.name, newTicketsCollector);
+        eventBus.subscribe(UpdatedTicketsFound.name, dataCollectionTracker);
 
         const jobScheduler = await new JobScheduler(config.DATA_COLLECTION_CRON, dataCollectionService);
 

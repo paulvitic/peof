@@ -1,5 +1,5 @@
 import EventListener from "./EventListener";
-import DomainEvent, {EventType} from "./DomainEvent";
+import DomainEvent from "./DomainEvent";
 import EventPublisher from "./EventPublisher";
 import EventBus from "./EventBus";
 import {DataCollectionStarted, UpdatedTicketsFound} from "./DataCollectionEvent";
@@ -62,7 +62,7 @@ export class UpdatedTicketsCollector extends DataCollectionProcess {
 
     public on = (event: DataCollectionStarted): void => {
         switch(event.eventType()) {
-            case EventType.DataCollectionStarted: {
+            case DataCollectionStarted.name: {
                 this.collectUpdatedTickets(event.aggregateId());
                 break;
             }
@@ -74,7 +74,7 @@ export class UpdatedTicketsCollector extends DataCollectionProcess {
     };
 
     private collectUpdatedTickets = (aggregateId: string): void =>  {
-        this.dataCollectionClient.ticketsUpdatedSince(new Date(), this.ticketUpdatesPublisher(aggregateId));
+        this.dataCollectionClient.fetchUpdatedTicketsSince(new Date(), this.ticketUpdatesPublisher(aggregateId));
     };
 
     private ticketUpdatesPublisher = (aggregateId: string): TicketUpdatesPublisher => {

@@ -1,4 +1,4 @@
-import {AbstractDomainEvent} from "./DomainEvent";
+import {AbstractDomainEvent, EventRegistry} from "./DomainEvent";
 import {Ticket} from "./Ticket";
 
 /**
@@ -13,6 +13,8 @@ export class DataCollectionStarted extends AbstractDomainEvent {
     }
 }
 
+EventRegistry.addEventType(DataCollectionStarted.name, DataCollectionStarted);
+
 /**
  *
  */
@@ -23,3 +25,8 @@ export class UpdatedTicketsFound extends AbstractDomainEvent {
         super(aggregate, aggregateId);
     }
 }
+
+EventRegistry.addEventType(UpdatedTicketsFound.name, UpdatedTicketsFound);
+
+
+

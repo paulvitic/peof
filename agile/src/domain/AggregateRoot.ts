@@ -9,13 +9,15 @@ export abstract class AggregateRoot {
     private readonly _type: string;
     private readonly _domainEvents: DomainEvent[];
 
-    protected constructor() {
-        this._id = Identity.generate();
+    protected constructor(id: string | undefined) {
+        this._id = id ? id : Identity.generate();
         this._type = this.constructor.name;
         this._domainEvents = new Array<DomainEvent>()
     }
 
-    //abstract fromEvents(events: DomainEvent[]):AggregateRoot {}
+    protected static fromEvents(id: string, events: DomainEvent[]): AggregateRoot {
+        throw Error;
+    }
 
     public get id() {
         return this._id;
@@ -33,7 +35,7 @@ export abstract class AggregateRoot {
         }
     }
 
-    protected generateEvent(event: DomainEvent): void {
+    protected recordEvent(event: DomainEvent): void {
         this._domainEvents.push(event);
     }
 }

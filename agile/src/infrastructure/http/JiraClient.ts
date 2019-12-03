@@ -18,7 +18,7 @@ export default class JiraClient implements DataCollectionClient {
                 private readonly jiraUser: string,
                 private readonly jiraApiToken: string) {}
 
-    ticketsUpdatedSince(date: Date, publishUpdatesUsing: TicketUpdatesPublisher): void {
+    fetchUpdatedTicketsSince(date: Date, publishUpdatesUsing: TicketUpdatesPublisher): void {
         const query = "?jql=" + encodeURI(
             this.openTickets + this.and +
             this.projects + this.and +
@@ -27,6 +27,7 @@ export default class JiraClient implements DataCollectionClient {
         const url = this.jiraUrl + query + fields;
 
         const Authorization = `Basic ${Buffer.from(this.jiraUser + ":" + this.jiraApiToken).toString("base64")}`;
+
         request({url, headers: {Authorization}, json: true}, this.responseHandler(publishUpdatesUsing));
     }
 

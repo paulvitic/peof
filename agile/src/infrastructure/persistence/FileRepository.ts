@@ -1,5 +1,5 @@
-import {Repository} from "../../domain/Repository";
 import fs from "fs"
+import {Repository} from "../../domain/Repository";
 import {AggregateRoot} from "../../domain/AggregateRoot";
 import DataCollection from "../../domain/DataCollection";
 
