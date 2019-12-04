@@ -7,12 +7,11 @@ import Identity from "./Identity";
 export abstract class AggregateRoot {
     private readonly _id: string;
     private readonly _type: string;
-    private readonly _domainEvents: DomainEvent[];
+    private readonly _domainEvents: DomainEvent[] = new Array<DomainEvent>();
 
-    protected constructor(id: string | undefined) {
+    protected constructor(id?: string) {
         this._id = id ? id : Identity.generate();
         this._type = this.constructor.name;
-        this._domainEvents = new Array<DomainEvent>()
     }
 
     protected static fromEvents(id: string, events: DomainEvent[]): AggregateRoot {

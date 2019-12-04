@@ -8,7 +8,8 @@ import JiraClient from "../infrastructure/http/JiraClient";
 import {DataCollectionFileRepo, FileRepository} from "../infrastructure/persistence/FileRepository";
 import DataCollectionExecutive from "../domain/DataCollectionExecutive";
 import FakeDataCollectionView from "../infrastructure/persistence/FakeDataCollectionView";
-import {DataCollectionStarted, UpdatedTicketsFound} from "../domain/DataCollectionEvent";
+import {DataCollectionStarted, DataCollectionFinished, TicketUpdatesCollected} from "../domain/DataCollectionEvent";
+import FileBasedEventStore from "../infrastructure/persistence/FileBasedEventStore";
 
 export class Container {
     private constructor(
@@ -24,9 +25,10 @@ export class Container {
         const eventBus = await startEventBus();
 
         const dataCollectionRepo = new DataCollectionFileRepo("./test/data/dataCollection");
-        const dataCollectionTracker = new DataCollectionTracker(eventBus, dataCollectionRepo);
+        const eventStore = new FileBasedEventStore("./data/eventLog");
+        const dataCollectionTracker = new DataCollectionTracker(eventStore, eventBus);
         const dataCollectionView = new FakeDataCollectionView();
-        const dataCollectionExecutive = new DataCollectionExecutive(dataCollectionRepo, dataCollectionView, dataCollectionTracker);
+        const dataCollectionExecutive = new DataCollectionExecutive(dataCollectionView, dataCollectionTracker);
         const newTicketsCollector = new UpdatedTicketsCollector(
             new JiraClient(config.JIRA_URL, config.JIRA_USER, config.JIRA_API_TOKEN),
             eventBus);
@@ -34,7 +36,7 @@ export class Container {
         const dataCollectionService = new DataCollectionService(dataCollectionExecutive, eventBus);
 
         eventBus.subscribe(DataCollectionStarted.name, newTicketsCollector);
-        eventBus.subscribe(UpdatedTicketsFound.name, dataCollectionTracker);
+        eventBus.subscribe(TicketUpdatesCollected.name, dataCollectionTracker);
 
         const jobScheduler = await new JobScheduler(config.DATA_COLLECTION_CRON, dataCollectionService);
 

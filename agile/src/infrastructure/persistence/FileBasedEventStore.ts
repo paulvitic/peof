@@ -35,7 +35,7 @@ export default class FileBasedEventStore implements EventStore {
         return logPath;
     };
 
-    private logFileExists = (logPath: string):boolean => {
+    private logFileExists = (logPath: string): boolean => {
         return fs.existsSync(logPath);
     };
 

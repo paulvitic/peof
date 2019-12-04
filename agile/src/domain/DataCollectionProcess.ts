@@ -2,12 +2,12 @@ import EventListener from "./EventListener";
 import DomainEvent from "./DomainEvent";
 import EventPublisher from "./EventPublisher";
 import EventBus from "./EventBus";
-import {DataCollectionStarted, UpdatedTicketsFound} from "./DataCollectionEvent";
+import {DataCollectionStarted, TicketUpdatesCollected} from "./DataCollectionEvent";
 import DataCollectionClient from "./DataCollectionClient";
-import {Repository} from "./Repository";
 import DataCollection from "./DataCollection";
 import {AggregateRoot} from "./AggregateRoot";
 import {Ticket} from "./Ticket";
+import EventStore from "./EventStore";
 
 export type TicketUpdatesPublisher = (updates: Ticket[]) => void;
 
@@ -34,20 +34,32 @@ abstract class DataCollectionProcess implements EventPublisher, EventListener {
  *
  */
 export class DataCollectionTracker extends DataCollectionProcess {
-    constructor(eventBus: EventBus,
-                private readonly repository: Repository<DataCollection>) {
+
+    constructor(private readonly eventStore: EventStore,
+                eventBus: EventBus) {
         super(eventBus);
     }
 
-    public startDataCollection(forChangesSince: Date): void {
+    public startDataCollection = (forChangesSince: Date): void => {
         DataCollection.start(forChangesSince)
-            .then((dataCollection) =>this.repository.save(dataCollection)
-                .then((saved) => this.publishEventsOf(saved)
-                    .then(() => global.log.info("Data collection started"))));
-    }
+                .then((dataCollection) => this.publishEventsOf(dataCollection)
+                    .then(() => global.log.info("Data collection started")));
+    };
 
-    public on(event: DomainEvent): void {
-        global.log.info("Data collection finished");
+    public on = (event: DomainEvent): void => {
+        switch(event.eventType()) {
+            case TicketUpdatesCollected.name: {
+                const events = this.eventStore.eventsOfAggregate(event.aggregate(), event.aggregateId());
+                const dataCollection = DataCollection.fromEvents(event.aggregateId(), events);
+                dataCollection.completeTicketUpdatesCollection();
+                this.publishEventsOf(dataCollection);
+                break;
+            }
+            default: {
+                global.log.warn("Dont know event type " + event.eventType());
+                break;
+            }
+        }
     }
 }
 
@@ -61,25 +73,14 @@ export class UpdatedTicketsCollector extends DataCollectionProcess {
     }
 
     public on = (event: DataCollectionStarted): void => {
-        switch(event.eventType()) {
-            case DataCollectionStarted.name: {
-                this.collectUpdatedTickets(event.aggregateId());
-                break;
-            }
-            default: {
-                global.log.warn("Dont know event type " + event.eventType());
-                break;
-            }
-        }
-    };
-
-    private collectUpdatedTickets = (aggregateId: string): void =>  {
-        this.dataCollectionClient.fetchUpdatedTicketsSince(new Date(), this.ticketUpdatesPublisher(aggregateId));
+        this.dataCollectionClient.fetchUpdatedTicketsSince(
+            new Date(),
+            this.ticketUpdatesPublisher(event.aggregateId()));
     };
 
     private ticketUpdatesPublisher = (aggregateId: string): TicketUpdatesPublisher => {
         return (updates : Ticket[]) => {
-            this.publish(new UpdatedTicketsFound(
+            this.publish(new TicketUpdatesCollected(
                 DataCollection.name,
                 aggregateId,
                 updates)

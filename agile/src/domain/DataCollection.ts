@@ -1,5 +1,5 @@
 import {AggregateRoot} from "./AggregateRoot";
-import {DataCollectionStarted, UpdatedTicketsFound} from "./DataCollectionEvent";
+import {DataCollectionStarted, DataCollectionFinished} from "./DataCollectionEvent";
 import DomainEvent from "./DomainEvent";
 import {Ticket} from "./Ticket";
 
@@ -17,11 +17,7 @@ export enum DataCollectionError {
 export default class DataCollection extends AggregateRoot {
     private startDate: Date | undefined;
     private changesSince: Date | undefined;
-    private updatedTicketsCollected: boolean = false;
-
-    private constructor(id?: string) {
-        super(id);
-    }
+    private ticketUpdatesCollected: boolean = false;
 
     static fromEvents(id: string, events: DomainEvent[]): DataCollection {
         const dataCollection = new DataCollection(id);
@@ -30,8 +26,8 @@ export default class DataCollection extends AggregateRoot {
                 case DataCollectionStarted.name:
                     dataCollection.onDataCollectionStarted(event as DataCollectionStarted);
                     break;
-                case UpdatedTicketsFound.name:
-                    dataCollection.onUpdatedTicketsFound(event as UpdatedTicketsFound);
+                case DataCollectionFinished.name:
+                    dataCollection.onTicketsUpdatesCollected();
                     break;
                 default:
             }
@@ -44,17 +40,31 @@ export default class DataCollection extends AggregateRoot {
         this.changesSince = event.changesSince
     }
 
-    private onUpdatedTicketsFound(event : {updates: Ticket[]}) {
-        this.updatedTicketsCollected = true;
+    private onTicketsUpdatesCollected() {
+        this.ticketUpdatesCollected = true;
     }
 
     static start = async (changesSince: Date): Promise<DataCollection> => {
         const dataCollection = new DataCollection();
         dataCollection.recordEvent(new DataCollectionStarted(
-            dataCollection.id,
             dataCollection.type,
+            dataCollection.id,
             new Date(),
             changesSince));
         return dataCollection;
     };
+
+    completeTicketUpdatesCollection() {
+        this.onTicketsUpdatesCollected();
+        if(this.isComplete()) {
+            this.recordEvent(new DataCollectionFinished(
+                this.type,
+                this.id,
+                true));
+        }
+    }
+
+    private isComplete(): boolean {
+        return this.ticketUpdatesCollected
+    }
 }

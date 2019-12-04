@@ -16,8 +16,7 @@ const collectionAlreadyRunning = (): Failure<number> => ({
  *
  */
 export default class DataCollectionExecutive {
-    constructor(private readonly repository: Repository<DataCollection>,
-                private readonly view: DataCollectionStatus,
+    constructor(private readonly view: DataCollectionStatus,
                 private readonly tracker: DataCollectionTracker) {
     }
 

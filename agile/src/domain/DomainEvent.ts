@@ -16,11 +16,15 @@ export default interface DomainEvent {
  */
 export abstract class AbstractDomainEvent implements DomainEvent {
     private readonly _eventType: string;
+    private readonly _aggregate: string;
+    private readonly _aggregateId: string;
     private readonly _generatedOn: Date;
 
-    constructor(private readonly _aggregate: string,
-                private readonly _aggregateId: string) {
+    constructor(_aggregate: string,
+                _aggregateId: string) {
             this._eventType = this.constructor.name;
+            this._aggregate = _aggregate;
+            this._aggregateId = _aggregateId;
             this._generatedOn= new Date();
     }
 
