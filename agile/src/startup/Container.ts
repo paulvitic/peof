@@ -7,9 +7,10 @@ import JobScheduler from "../infrastructure/job/JobScheduler";
 import JiraClient from "../infrastructure/http/JiraClient";
 import {DataCollectionFileRepo, FileRepository} from "../infrastructure/persistence/FileRepository";
 import DataCollectionExecutive from "../domain/DataCollectionExecutive";
-import FakeDataCollectionView from "../infrastructure/persistence/FakeDataCollectionView";
+import FileDataCollectionMonitor from "../infrastructure/persistence/FileDataCollectionMonitor";
 import {DataCollectionStarted, DataCollectionFinished, TicketUpdatesCollected} from "../domain/DataCollectionEvent";
-import FileBasedEventStore from "../infrastructure/persistence/FileBasedEventStore";
+import FileEventStore from "../infrastructure/persistence/FileEventStore";
+import {DataCollectionMonitor} from "../domain/DataCollectionMonitor";
 
 export class Container {
     private constructor(
@@ -18,6 +19,7 @@ export class Container {
         readonly newTicketsCollector: UpdatedTicketsCollector,
         readonly dataCollectionService: DataCollectionService,
         readonly joScheduler: JobScheduler,
+        readonly dataCollectionMonitor : DataCollectionMonitor
     ) {}
 
     static async build(config: Environment) {
@@ -25,10 +27,10 @@ export class Container {
         const eventBus = await startEventBus();
 
         const dataCollectionRepo = new DataCollectionFileRepo("./test/data/dataCollection");
-        const eventStore = new FileBasedEventStore("./data/eventLog");
+        const eventStore = new FileEventStore("./data/eventLog");
         const dataCollectionTracker = new DataCollectionTracker(eventStore, eventBus);
-        const dataCollectionView = new FakeDataCollectionView();
-        const dataCollectionExecutive = new DataCollectionExecutive(dataCollectionView, dataCollectionTracker);
+        const dataCollectionMonitor = new FileDataCollectionMonitor();
+        const dataCollectionExecutive = new DataCollectionExecutive(dataCollectionMonitor, dataCollectionTracker);
         const newTicketsCollector = new UpdatedTicketsCollector(
             new JiraClient(config.JIRA_URL, config.JIRA_USER, config.JIRA_API_TOKEN),
             eventBus);
@@ -37,6 +39,8 @@ export class Container {
 
         eventBus.subscribe(DataCollectionStarted.name, newTicketsCollector);
         eventBus.subscribe(TicketUpdatesCollected.name, dataCollectionTracker);
+        eventBus.subscribe(DataCollectionStarted.name, dataCollectionMonitor);
+        eventBus.subscribe(DataCollectionFinished.name, dataCollectionMonitor);
 
         const jobScheduler = await new JobScheduler(config.DATA_COLLECTION_CRON, dataCollectionService);
 
@@ -46,6 +50,7 @@ export class Container {
             newTicketsCollector,
             dataCollectionService,
             jobScheduler,
+            dataCollectionMonitor
         );
     }
 }

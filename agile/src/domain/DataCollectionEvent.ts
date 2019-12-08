@@ -32,7 +32,9 @@ EventRegistry.addEventType(TicketUpdatesCollected.name, TicketUpdatesCollected);
 export class DataCollectionFinished extends AbstractDomainEvent {
     constructor(aggregate: string,
                 aggregateId: string,
-                readonly status: boolean) {
+                readonly startDate: Date | undefined,
+                readonly endDate: Date | undefined,
+                readonly result: string) {
         super(aggregate, aggregateId);
     }
 }

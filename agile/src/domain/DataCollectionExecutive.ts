@@ -1,7 +1,6 @@
-import DataCollection, {DataCollectionError} from "./DataCollection";
+import {DataCollectionError} from "./DataCollection";
 import {Except, withFailure, Failure, withSuccess} from "./Except";
-import {Repository} from "./Repository";
-import {DataCollectionStatus} from "./DataCollectionStatus";
+import {DataCollectionMonitor} from "./DataCollectionMonitor";
 import {DataCollectionTracker} from "./DataCollectionProcess";
 
 /**
@@ -16,12 +15,12 @@ const collectionAlreadyRunning = (): Failure<number> => ({
  *
  */
 export default class DataCollectionExecutive {
-    constructor(private readonly view: DataCollectionStatus,
+    constructor(private readonly monitor: DataCollectionMonitor,
                 private readonly tracker: DataCollectionTracker) {
     }
 
     start(forChangesSince: Date): Except<Failure<DataCollectionError.CollectionAlreadyRunning>, void>{
-        if(this.view.thereIsRunningCollection()) return withFailure(collectionAlreadyRunning());
+        if(this.monitor.isRunning()) return withFailure(collectionAlreadyRunning());
         return withSuccess(this.tracker.startDataCollection(forChangesSince));
     }
 }

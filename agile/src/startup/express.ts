@@ -19,7 +19,7 @@ export default (container: Container, config: Environment) => {
   app.use(bodyParser.json());
 
   // Load API routes
-  app.use(config.API_PREFIX, routes());
+  app.use(config.API_PREFIX, routes(container));
 
   /// catch 404 and forward to error handler
   app.use((req, res, next) => {
@@ -50,4 +50,6 @@ export default (container: Container, config: Environment) => {
       },
     });
   });
+
+  app.listen(config.PORT);
 };

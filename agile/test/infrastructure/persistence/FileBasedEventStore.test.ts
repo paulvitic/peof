@@ -1,5 +1,5 @@
 import {AbstractDomainEvent, EventRegistry} from "../../../src/domain/DomainEvent";
-import FileBasedEventStore from "../../../src/infrastructure/persistence/FileBasedEventStore";
+import FileEventStore from "../../../src/infrastructure/persistence/FileEventStore";
 
 class TestEvent extends AbstractDomainEvent {
     constructor(aggregate: string, aggregateId: string,
@@ -10,10 +10,9 @@ class TestEvent extends AbstractDomainEvent {
 
 EventRegistry.addEventType(TestEvent.name, TestEvent);
 
-// http://choly.ca/post/typescript-json/
 test('should get failure value', () => {
     let testEvent = new TestEvent("TestAggregate", "1111","propertyValue");
-    const eventStore = new FileBasedEventStore("./data/eventLog");
+    const eventStore = new FileEventStore("./data/eventLog");
     eventStore.logEvent(testEvent);
     const events = eventStore.eventsOfAggregate("TestAggregate", "1111");
     for (let event of events) {

@@ -1,5 +1,3 @@
-
-
 /**
  *
  */
@@ -53,13 +51,16 @@ export class EventRegistry {
         EventRegistry.registry.set(eventType, claz)
     };
 
-    static fromJson = (jsonString: string): DomainEvent | undefined => {
+    static fromJson = (jsonString: string): DomainEvent => {
+        // TODO can we use a type selector here just like the View model mutator selector
         const partial = JSON.parse(jsonString);
         const eventType = EventRegistry.registry.get(partial._eventType);
         if (eventType) {
             const event = new eventType(partial._aggregate, partial._aggregateId);
             Object.assign(event, partial);
             return event
+        } else {
+            throw Error
         }
     }
 }

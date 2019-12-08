@@ -11,6 +11,12 @@ export enum DataCollectionError {
     CollectionAlreadyRunning,
 }
 
+export enum DataCollectionStatus {
+    Running,
+    Success,
+    Failed,
+}
+
 /**
  *
  */
@@ -18,6 +24,8 @@ export default class DataCollection extends AggregateRoot {
     private startDate: Date | undefined;
     private changesSince: Date | undefined;
     private ticketUpdatesCollected: boolean = false;
+    private status: DataCollectionStatus = DataCollectionStatus.Running;
+    private endDate: Date | undefined;
 
     static fromEvents(id: string, events: DomainEvent[]): DataCollection {
         const dataCollection = new DataCollection(id);
@@ -60,11 +68,18 @@ export default class DataCollection extends AggregateRoot {
             this.recordEvent(new DataCollectionFinished(
                 this.type,
                 this.id,
-                true));
+                this.startDate,
+                this.endDate,
+                DataCollectionStatus[this.status]));
         }
     }
 
     private isComplete(): boolean {
-        return this.ticketUpdatesCollected
+        if (this.ticketUpdatesCollected) {
+            this.endDate = new Date();
+            this.status = DataCollectionStatus.Success;
+            return true;
+        }
+        return false;
     }
 }

@@ -1,7 +1,7 @@
 import LocalEventBus from "../infrastructure/message/LocalEventBus";
 import EventBus from "../domain/EventBus";
-import FileBasedEventStore from "../infrastructure/persistence/FileBasedEventStore";
+import FileEventStore from "../infrastructure/persistence/FileEventStore";
 
 export default (): EventBus => {
-    return new LocalEventBus(new FileBasedEventStore("./data/eventLog"));
+    return new LocalEventBus(new FileEventStore("./data/eventLog"));
 }

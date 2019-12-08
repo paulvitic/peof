@@ -1,8 +1,8 @@
 import fs from "fs"
 import EventStore from "../../domain/EventStore";
-import DomainEvent, {AbstractDomainEvent, EventRegistry} from "../../domain/DomainEvent";
+import DomainEvent, {EventRegistry} from "../../domain/DomainEvent";
 
-export default class FileBasedEventStore implements EventStore {
+export default class FileEventStore implements EventStore {
     constructor(private readonly rootPath: string) {}
 
     eventsOfAggregate = (aggregate: string, aggregateId: string): DomainEvent[] => {
