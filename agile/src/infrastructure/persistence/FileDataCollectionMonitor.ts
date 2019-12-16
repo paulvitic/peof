@@ -4,14 +4,11 @@ import {DataCollectionFinished, DataCollectionStarted} from "../../domain/DataCo
 import {View} from "../../domain/View";
 import fs from "fs";
 
-/**
- *
- */
 export default class FileDataCollectionMonitor extends View implements DataCollectionMonitor {
 
     private readonly filePath = "./data/view/dataCollectionMonitor.json";
 
-    on = (event: DomainEvent): void => {
+    onEvent = (event: DomainEvent): void => {
         this.select()
             .when(DataCollectionStarted, this.startDataCollection)
             .when(DataCollectionFinished, this.endDataCollection)

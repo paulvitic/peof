@@ -5,15 +5,26 @@ import DomainEvent, {EventRegistry} from "../../domain/DomainEvent";
 export default class FileEventStore implements EventStore {
     constructor(private readonly rootPath: string) {}
 
-    eventsOfAggregate = (aggregate: string, aggregateId: string): DomainEvent[] => {
+    eventsOfAggregate = (aggregate: string, aggregateId: string): Promise<DomainEvent[]> => {
         const path = `${this.rootPath}/${aggregate}/${aggregateId}/`;
         const result = new Array<DomainEvent>();
-        const files = fs.readdirSync(path);
-        for (let file of files){
-            let event = EventRegistry.fromJson(fs.readFileSync(path + file).toString());
-            if (event) result.push(event);
+        if (this.logFileExists(path)) {
+            const files = fs.readdirSync(path);
+            for (let file of files){
+                let event = EventRegistry.fromJson(fs.readFileSync(path + file).toString());
+                if (event) result.push(event);
+            }
         }
-        return result;
+        return new Promise((resolve, reject) => {
+            resolve(result);
+        });
+
+      /*  return new Promise((resolve, reject) => {
+            child.resolve({}, context, request, {}, (err, result) => {
+                if (err) reject(err);
+                else resolve(result);
+            });
+        });*/
     };
 
     eventsOfAggregateSince = (aggregate: string, aggregateId: string, since: Date):  DomainEvent[] => {

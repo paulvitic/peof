@@ -1,10 +1,10 @@
-import DomainEvent, {AbstractDomainEvent} from "./DomainEvent";
+import DomainEvent from "./DomainEvent";
 
-class EventMutatorPattern<T>{
+class EventMutatorPattern<T extends DomainEvent = DomainEvent>{
     private readonly eventType: string;
+    private readonly mutator:(event: T) => void;
 
-    constructor(event: any,
-                private readonly mutator:(event: T) => void) {
+    constructor(event: any, mutator:(event: T) => void) {
         this.eventType = event.name;
         this.mutator = mutator;
     }
@@ -18,10 +18,10 @@ class EventMutatorPattern<T>{
     }
 }
 
-class MutateSelector<T> {
+class MutateSelector<T extends DomainEvent = DomainEvent> {
     private readonly patterns = new Array<EventMutatorPattern<T>>();
 
-    when = (event:any, mutator: (event:T) => void) => {
+    when = (event:any, mutator:(event:T) => void) => {
         this.patterns.push(new EventMutatorPattern<T>(event, mutator));
         return this;
     };
@@ -34,9 +34,9 @@ class MutateSelector<T> {
 }
 
 export abstract class View<T extends DomainEvent = DomainEvent> {
-    abstract on(event: T): void;
+    abstract onEvent(event: T): void;
 
-    select = (): MutateSelector<T> => {
+    select = ():MutateSelector<T> => {
         return new MutateSelector<T>();
     }
 }

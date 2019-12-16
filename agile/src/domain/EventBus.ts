@@ -6,5 +6,5 @@ import EventListener from "./EventListener";
  */
 export default interface EventBus {
     publish(event: DomainEvent): void
-    subscribe(eventType: string, listener: EventListener): void
+    subscribe<T extends DomainEvent>(eventType: string, handler:(event: T) => void): void
 }

@@ -1,6 +1,7 @@
 import ApplicationService from "./ApplicationService";
 import EventBus from "../domain/EventBus";
 import DataCollectionExecutive from "../domain/DataCollectionExecutive";
+import DomainEvent from "../domain/DomainEvent";
 
 export default class DataCollectionService extends ApplicationService {
 

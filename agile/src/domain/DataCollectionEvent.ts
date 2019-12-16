@@ -1,5 +1,5 @@
 import {AbstractDomainEvent, EventRegistry} from "./DomainEvent";
-import {Ticket} from "./Ticket";
+import {Ticket, TicketProperties} from "./Ticket";
 
 /**
  *
@@ -15,13 +15,10 @@ export class DataCollectionStarted extends AbstractDomainEvent {
 
 EventRegistry.addEventType(DataCollectionStarted.name, DataCollectionStarted);
 
-/**
- *
- */
 export class TicketUpdatesCollected extends AbstractDomainEvent {
     constructor(aggregate: string,
                 aggregateId: string,
-                readonly updates: Ticket[]) {
+                readonly updates: TicketProperties[]) {
         super(aggregate, aggregateId);
     }
 }

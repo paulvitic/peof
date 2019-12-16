@@ -1,6 +1,7 @@
 import EventBus from "../domain/EventBus";
 import EventPublisher from "../domain/EventPublisher";
 import {AggregateRoot} from "../domain/AggregateRoot";
+import DomainEvent from "../domain/DomainEvent";
 
 export default abstract class ApplicationService implements EventPublisher {
     protected constructor(private readonly eventBus: EventBus) {}

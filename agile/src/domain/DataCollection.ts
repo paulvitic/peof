@@ -1,11 +1,7 @@
 import {AggregateRoot} from "./AggregateRoot";
 import {DataCollectionStarted, DataCollectionFinished} from "./DataCollectionEvent";
 import DomainEvent from "./DomainEvent";
-import {Ticket} from "./Ticket";
 
-/**
- *
- */
 export enum DataCollectionError {
     InvalidCreationArguments,
     CollectionAlreadyRunning,
@@ -17,9 +13,6 @@ export enum DataCollectionStatus {
     Failed,
 }
 
-/**
- *
- */
 export default class DataCollection extends AggregateRoot {
     private startDate: Date | undefined;
     private changesSince: Date | undefined;
@@ -41,15 +34,6 @@ export default class DataCollection extends AggregateRoot {
             }
         }
         return dataCollection;
-    }
-
-    private onDataCollectionStarted(event : {startDate: Date, changesSince: Date}) {
-        this.startDate = event.startDate;
-        this.changesSince = event.changesSince
-    }
-
-    private onTicketsUpdatesCollected() {
-        this.ticketUpdatesCollected = true;
     }
 
     static start = async (changesSince: Date): Promise<DataCollection> => {
@@ -81,5 +65,14 @@ export default class DataCollection extends AggregateRoot {
             return true;
         }
         return false;
+    }
+
+    private onDataCollectionStarted(event : {startDate: Date, changesSince: Date}) {
+        this.startDate = event.startDate;
+        this.changesSince = event.changesSince
+    }
+
+    private onTicketsUpdatesCollected() {
+        this.ticketUpdatesCollected = true;
     }
 }

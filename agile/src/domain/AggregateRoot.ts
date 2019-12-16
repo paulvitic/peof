@@ -1,40 +1,38 @@
 import DomainEvent from "./DomainEvent";
 import Identity from "./Identity";
 
-/**
- *
- */
 export abstract class AggregateRoot {
-    private readonly _id: string;
-    private readonly _type: string;
-    private readonly _domainEvents: DomainEvent[] = new Array<DomainEvent>();
+    private readonly aggregateId: string;
+    private readonly aggregateType: string;
+
+    private readonly domainEvents: DomainEvent[] = new Array<DomainEvent>();
 
     protected constructor(id?: string) {
-        this._id = id ? id : Identity.generate();
-        this._type = this.constructor.name;
+        this.aggregateId = id ? id : Identity.generate();
+        this.aggregateType = this.constructor.name;
     }
 
     protected static fromEvents(id: string, events: DomainEvent[]): AggregateRoot {
         throw Error;
     }
 
-    public get id() {
-        return this._id;
+    get id() {
+        return this.aggregateId;
     }
 
-    public get type() {
-        return this._type;
+    get type() {
+        return this.aggregateType;
     }
 
-    public publishEventsUsing(publisher: (event: DomainEvent) => void) {
-        let nextEvent = this._domainEvents.pop();
+    publishEventsUsing(publisher: (event: DomainEvent) => void) {
+        let nextEvent = this.domainEvents.pop();
         while (nextEvent) {
             publisher(nextEvent);
-            nextEvent = this._domainEvents.pop();
+            nextEvent = this.domainEvents.pop();
         }
     }
 
     protected recordEvent(event: DomainEvent): void {
-        this._domainEvents.push(event);
+        this.domainEvents.push(event);
     }
 }
