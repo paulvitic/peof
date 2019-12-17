@@ -1,6 +1,3 @@
-/**
- *
- */
 export default interface DomainEvent {
     eventType(): string;
     aggregate(): string;
@@ -9,9 +6,6 @@ export default interface DomainEvent {
 }
 
 
-/**
- *
- */
 export abstract class AbstractDomainEvent implements DomainEvent {
     private readonly _eventType: string;
     private readonly _aggregate: string;
@@ -51,16 +45,19 @@ export class EventRegistry {
         EventRegistry.registry.set(eventType, claz)
     };
 
-    static fromJson = (jsonString: string): DomainEvent => {
-        // TODO can we use a type selector here just like the View model mutator selector
+    static fromJsonString = (jsonString: string): DomainEvent => {
         const partial = JSON.parse(jsonString);
-        const eventType = EventRegistry.registry.get(partial._eventType);
+        return EventRegistry.fromJsonObject(partial);
+    };
+
+    static fromJsonObject = (jsonObject: any): DomainEvent => {
+        const eventType = EventRegistry.registry.get(jsonObject._eventType);
         if (eventType) {
-            const event = new eventType(partial._aggregate, partial._aggregateId);
-            Object.assign(event, partial);
+            const event = new eventType(jsonObject._aggregate, jsonObject._aggregateId);
+            Object.assign(event, jsonObject);
             return event
         } else {
-            throw Error
+            throw new Error(`${jsonObject._eventType} is not a registered event type.`)
         }
     }
 }

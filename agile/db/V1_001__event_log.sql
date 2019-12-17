@@ -4,6 +4,7 @@ CREATE TABLE event_log
     aggregate    VARCHAR(31) NOT NULL,
     event_type   VARCHAR(31) NOT NULL,
     generated_on TIMESTAMP   NOT NULL,
-    event        json        NOT NULL,
-    PRIMARY KEY (aggregate_id, aggregate)
+    event        json        NOT NULL
 );
+
+CREATE INDEX event_log_idx ON event_log (aggregate, aggregate_id, generated_on);

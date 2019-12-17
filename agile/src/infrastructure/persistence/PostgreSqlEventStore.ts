@@ -1,9 +1,9 @@
 import {Pool} from "pg";
 import EventStore from "../../domain/EventStore";
-import DomainEvent from "../../domain/DomainEvent";
+import DomainEvent, {EventRegistry} from "../../domain/DomainEvent";
 
 export default class PostgreSqlEventStore implements EventStore {
-    private readonly pool : Pool;
+    private readonly pool: Pool;
 
     constructor() {
         this.pool = new Pool();
@@ -14,34 +14,52 @@ export default class PostgreSqlEventStore implements EventStore {
     }
 
     eventsOfAggregate = async (aggregate: string, aggregateId: string): Promise<DomainEvent[]> => {
-        const client = await this.pool.connect();
+        const query = {
+            text: 'SELECT event FROM jira.event_log WHERE aggregate=$1 AND aggregate_id=$2 ORDER BY generated_on',
+            values: [aggregate, aggregateId],
+        };
+
+        let error:Error;
+        const events = new Array<DomainEvent>();
         try {
-            const res = await client.query('SELECT * FROM users WHERE id = $1', [1]);
-            console.log(res.rows[0]);
-            return new Promise((resolve, reject) => {resolve([]);})
+            let result = await this.pool.query(query);
+            for (let row of result.rows){
+                let event = EventRegistry.fromJsonObject(row.event);
+                if (event) events.push(event);
+            }
         } catch (e) {
-            return new Promise((resolve, reject) => {reject(e);})
-        } finally {
-            client.release()
+            error = e
         }
 
+        return new Promise((resolve, reject) => {
+            if (error) reject(error);
+            else resolve(events);
+        })
     };
 
     eventsOfAggregateSince = async (aggregate: string, aggregateId: string, since: Date): Promise<DomainEvent[]> => {
         return new Promise((resolve, reject) => {
-            reject(new Error("Nor yet implemented"));
+            reject(new Error("Not yet implemented"));
         })
     };
 
     logEvent = async (event: DomainEvent): Promise<void> => {
-        const client = await this.pool.connect();
+        const query = {
+            text: 'INSERT INTO jira.event_log(aggregate_id, aggregate, event_type, generated_on, event) VALUES($1, $2, $3, $4, $5) RETURNING event_type',
+            values: [event.aggregateId(), event.aggregate(), event.eventType(), event.generatedOn(), JSON.stringify(event)],
+        };
+
+        let error:Error;
         try {
-            const res = await client.query('SELECT * FROM users WHERE id = $1', [1]);
-            console.log(res.rows[0])
+            let result = await this.pool.query(query);
+            global.log.info(`Logged ${result.rows[0].event_type}`)
         } catch (e) {
-            return new Promise((resolve, reject) => {reject(e);})
-        } finally {
-            client.release()
+            error = e
         }
+
+        return new Promise((resolve, reject) => {
+            if (error) reject(error);
+            else resolve();
+        })
     }
 }

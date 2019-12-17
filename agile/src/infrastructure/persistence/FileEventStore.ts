@@ -11,20 +11,13 @@ export default class FileEventStore implements EventStore {
         if (this.logFileExists(path)) {
             const files = fs.readdirSync(path);
             for (let file of files){
-                let event = EventRegistry.fromJson(fs.readFileSync(path + file).toString());
+                let event = EventRegistry.fromJsonString(fs.readFileSync(path + file).toString());
                 if (event) result.push(event);
             }
         }
         return new Promise((resolve, reject) => {
             resolve(result);
         });
-
-      /*  return new Promise((resolve, reject) => {
-            child.resolve({}, context, request, {}, (err, result) => {
-                if (err) reject(err);
-                else resolve(result);
-            });
-        });*/
     };
 
     eventsOfAggregateSince = async (aggregate: string, aggregateId: string, since: Date):  Promise<DomainEvent[]> => {

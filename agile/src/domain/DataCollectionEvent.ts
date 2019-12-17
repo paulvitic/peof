@@ -1,9 +1,6 @@
 import {AbstractDomainEvent, EventRegistry} from "./DomainEvent";
-import {Ticket, TicketProperties} from "./Ticket";
+import {TicketProperties} from "./Ticket";
 
-/**
- *
- */
 export class DataCollectionStarted extends AbstractDomainEvent {
     constructor(aggregate: string,
                 aggregateId: string,

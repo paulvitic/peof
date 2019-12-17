@@ -14,8 +14,10 @@ test('should get failure value', () => {
     let testEvent = new TestEvent("TestAggregate", "1111","propertyValue");
     const eventStore = new FileEventStore("./data/eventLog");
     eventStore.logEvent(testEvent);
-    const events = eventStore.eventsOfAggregate("TestAggregate", "1111");
-    for (let event of events) {
-        console.log(event.eventType());
-    }
+    eventStore.eventsOfAggregate("TestAggregate", "1111")
+        .then((events)=>{
+            for (let event of events) {
+                console.log(event.eventType());
+            }
+        });
 });
