@@ -5,7 +5,7 @@ import DomainEvent, {EventRegistry} from "../../domain/DomainEvent";
 export default class FileEventStore implements EventStore {
     constructor(private readonly rootPath: string) {}
 
-    eventsOfAggregate = (aggregate: string, aggregateId: string): Promise<DomainEvent[]> => {
+    eventsOfAggregate = async (aggregate: string, aggregateId: string): Promise<DomainEvent[]> => {
         const path = `${this.rootPath}/${aggregate}/${aggregateId}/`;
         const result = new Array<DomainEvent>();
         if (this.logFileExists(path)) {
@@ -27,11 +27,11 @@ export default class FileEventStore implements EventStore {
         });*/
     };
 
-    eventsOfAggregateSince = (aggregate: string, aggregateId: string, since: Date):  DomainEvent[] => {
+    eventsOfAggregateSince = async (aggregate: string, aggregateId: string, since: Date):  Promise<DomainEvent[]> => {
         return new Array<DomainEvent>();
     };
 
-    logEvent = (event: DomainEvent): void => {
+    logEvent = async (event: DomainEvent): Promise<void> => {
         const data = JSON.stringify(event, null, 4);
         fs.writeFileSync(this.logPathOf(event), data);
     };
