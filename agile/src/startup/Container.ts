@@ -13,6 +13,7 @@ import FileEventStore from "../infrastructure/persistence/FileEventStore";
 import {DataCollectionMonitor} from "../domain/DataCollectionMonitor";
 import {DomainEventHandler} from "../infrastructure/eventHandler/DomainEventHandler";
 import TicketService from "../application/TicketService";
+import PostgreSqlRepository from "../infrastructure/persistence/PostgreSqlRepository";
 
 export class Container {
     private constructor(
@@ -23,7 +24,8 @@ export class Container {
         readonly jobScheduler: JobScheduler,
         readonly dataCollectionMonitor : DataCollectionMonitor,
         readonly ticketService: TicketService,
-        readonly domainEventHandler: DomainEventHandler
+        readonly domainEventHandler: DomainEventHandler,
+        readonly postgreSqlRepository: PostgreSqlRepository
     ) {}
 
     static async build(config: Environment) {
@@ -49,6 +51,8 @@ export class Container {
         eventBus.subscribe(TicketUpdatesCollected.name, domainEventHandler.whenTicketUpdatesAreCollected);
 
         const jobScheduler = await new JobScheduler(config.DATA_COLLECTION_CRON, dataCollectionService);
+        const postgreSqlRepository = await new PostgreSqlRepository();
+        postgreSqlRepository.connect();
 
         return new Container(
             eventBus,
@@ -58,7 +62,8 @@ export class Container {
             jobScheduler,
             dataCollectionMonitor,
             ticketService,
-            domainEventHandler
+            domainEventHandler,
+            postgreSqlRepository
 
         );
     }
